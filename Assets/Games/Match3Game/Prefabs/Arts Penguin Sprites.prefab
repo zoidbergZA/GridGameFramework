@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1283233994134920}
+  m_IsPrefabParent: 1
+--- !u!1 &1283233994134920
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4793305877938462}
+  - component: {fileID: 114141686314645174}
+  m_Layer: 0
+  m_Name: Arts Penguin Sprites
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4793305877938462
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1283233994134920}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114141686314645174
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1283233994134920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9d1279d7673bb0499e045301ebed5a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pink: {fileID: 21300002, guid: cd87358682f8b3e489cf23d6c69051cc, type: 3}
+  blue: {fileID: 21300008, guid: cd87358682f8b3e489cf23d6c69051cc, type: 3}
+  orange: {fileID: 21300004, guid: cd87358682f8b3e489cf23d6c69051cc, type: 3}
+  yellow: {fileID: 21300000, guid: cd87358682f8b3e489cf23d6c69051cc, type: 3}
+  lila: {fileID: 21300006, guid: cd87358682f8b3e489cf23d6c69051cc, type: 3}
