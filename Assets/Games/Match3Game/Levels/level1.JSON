@@ -1,6 +1,6 @@
 {
-    "moves": 3,
-    "targetScore": 400,
+    "moves": 10,
+    "targetScore": 4000,
     "gemValue": 10,
     "size": {
         "x": 7,
