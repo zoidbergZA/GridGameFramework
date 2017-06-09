@@ -31,7 +31,15 @@ namespace Match3
 
 		public static Func<int, string> CandidatesDebugger = (cell) => 
 		{
-			return "todo";
+			if (cell == 0)
+				return "none";
+			else if (cell == 1)
+				return "fixed";
+			else if (cell == 2)
+				return "free";
+			else if (cell == 3)
+				return "options";
+			return "null";
 		};
 
 		public static Func<TrickleState, string> TrickleDebugger = (cell) => 
