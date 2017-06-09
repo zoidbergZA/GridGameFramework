@@ -9,7 +9,7 @@ public class BoardLayer<TLayer> : IGrid
 
 	public string Name {get ; private set; }
 	public Vec2 Size { get; private set; }
-	public ILayerDebugger<TLayer> LayerDebugger { get; private set; }
+	public LayerDebugger<TLayer> LayerDebugger { get; private set; }
 
 	public BoardLayer(string name, Vec2 size, Func<TLayer, string> debuggerFunc = null)
 	{
@@ -20,7 +20,7 @@ public class BoardLayer<TLayer> : IGrid
 
 		if (debuggerFunc != null)
 		{
-			LayerDebugger = new ILayerDebugger<TLayer>(this, debuggerFunc);
+			LayerDebugger = new LayerDebugger<TLayer>(this, debuggerFunc);
 		}
 	}
 

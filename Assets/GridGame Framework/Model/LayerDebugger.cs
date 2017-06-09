@@ -4,13 +4,13 @@ using System;
 
 namespace GridGame
 {
-	public class ILayerDebugger<T>
+	public class LayerDebugger<T>
 	{
 		protected BoardLayer<T> layer;
 		private Vec2 size;
 		private Func<T, string> classifier;
 
-		public ILayerDebugger(BoardLayer<T> layer, Func<T, string> classifier)
+		public LayerDebugger(BoardLayer<T> layer, Func<T, string> classifier)
 		{
 			this.layer = layer;
 			this.classifier = classifier;
