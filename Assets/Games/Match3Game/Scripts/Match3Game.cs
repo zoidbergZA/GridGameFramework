@@ -108,12 +108,10 @@ namespace Match3
 
 			//create board and layers
 			board = new Board(BOARD_SIZE);
-			var fieldsLayer = new BoardLayer<Field>("Fields", BOARD_SIZE);
-			fieldsLayer.SetDebugger(new FieldsDebugger(fieldsLayer));
-			var matchesLayer = new BoardLayer<int>("Matches", BOARD_SIZE);
-			matchesLayer.SetDebugger(new MatchDebugger(matchesLayer));
-			var candidatesLayer = new BoardLayer<int>("Candidates", BOARD_SIZE);
-			var trickleLayer = new BoardLayer<TrickleState>("Trickle", BOARD_SIZE);
+			var fieldsLayer = new BoardLayer<Field>("Fields", BOARD_SIZE, LayerDebuggers.FieldsDebugger);
+			var matchesLayer = new BoardLayer<int>("Matches", BOARD_SIZE, LayerDebuggers.MatchesDebugger);
+			var candidatesLayer = new BoardLayer<int>("Candidates", BOARD_SIZE, LayerDebuggers.CandidatesDebugger);
+			var trickleLayer = new BoardLayer<TrickleState>("Trickle", BOARD_SIZE, LayerDebuggers.TrickleDebugger);
 
 			fieldsLayerId = board.AddLayer(fieldsLayer);
 			matchesLayerId = board.AddLayer(matchesLayer);

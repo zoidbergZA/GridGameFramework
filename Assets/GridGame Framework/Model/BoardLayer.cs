@@ -11,23 +11,23 @@ public class BoardLayer<TLayer> : IGrid
 	public Vec2 Size { get; private set; }
 	public ILayerDebugger<TLayer> LayerDebugger { get; private set; }
 
-	public BoardLayer(string name, Vec2 size)
+	public BoardLayer(string name, Vec2 size, Func<TLayer, string> debuggerFunc = null)
 	{
 		Name = name;
 		Size = size;
 
 		cells = new TLayer[size.x, size.y];
+
+		if (debuggerFunc != null)
+		{
+			LayerDebugger = new ILayerDebugger<TLayer>(this, debuggerFunc);
+		}
 	}
 
     public Vec2 GetDimensions()
     {
         return Size;
     }
-
-	public void SetDebugger(ILayerDebugger<TLayer> layerDebugger)
-	{
-		LayerDebugger = layerDebugger;
-	}
 
 	public TLayer[,] GetSample(Stencil stencil, Vec2 anchor)
 	{
