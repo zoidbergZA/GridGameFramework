@@ -26,7 +26,7 @@ namespace Match3
 					{
 						if (field.Gem != null)
 						{
-							SetCellColor(new Vec2(i, j), colorMap[field.Gem.color]);
+							SetCellColor(new Vec2(i, j), Match3Game.colorMap[field.Gem.color]);
 						}
 					}
 				}	

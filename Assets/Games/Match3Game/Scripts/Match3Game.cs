@@ -14,6 +14,16 @@ namespace Match3
 
 	public class Match3Game : MonoBehaviour
 	{
+		public static Dictionary<GemColor, Color> colorMap = new Dictionary<GemColor, Color>()
+		{
+			{ GemColor.Blue, Color.blue },
+			{ GemColor.Orange, new Color(255, 178, 0) },
+			{ GemColor.None, Color.white },
+			{ GemColor.Pink, new Color(255,192,203) },
+			{ GemColor.Yellow, Color.yellow },
+			{ GemColor.Lila, Color.green },
+		};
+
 		public const int WIDTH = 7;
 		public const int HEIGHT = 7;
 
