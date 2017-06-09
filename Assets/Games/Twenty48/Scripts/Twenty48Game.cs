@@ -14,6 +14,9 @@ namespace Twenty48
 		public BoardView boardView;
 
 		private Board board;
+		private int tilesLayerId;
+		private int gravityLayerId;
+
 		private BoardController<MoveDirection> boardController;
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
 
@@ -43,15 +46,18 @@ namespace Twenty48
 
 		private void StartGame()
 		{
+			//create board and layers
 			Vec2 boardSize = new Vec2(width, height);
 			board = new Board(boardSize);
+			tilesLayerId = board.AddLayer(new BoardLayer<int>(boardSize));
+			gravityLayerId = board.AddLayer(new BoardLayer<int>(boardSize));
 
 			InitControllers();
 			boardView.Init(boardSize);
 
 			//init random starting tile
 			var pos = new Vec2(Random.Range(0, boardSize.x), Random.Range(0, boardSize.y));
-			board.tilesLayer.cells[pos.x, pos.y] = 1;
+			board.GetLayer<int>(tilesLayerId).cells[pos.x, pos.y] = 1;
 			boardView.CreateTileView(pos);
 
 			//register boardController event listeners

@@ -25,14 +25,15 @@ namespace Match3
 		private BoardLayer<TrickleState> trickleLayer;
 		private AnimationController animController;
 		
-		public Trickler(BoardController<SwapInput> controller, Board board, MatchProcessor matcher, MatchResolver resolver, AnimationController animController)
+		public Trickler(BoardController<SwapInput> controller, Board board, int fieldsLayerId, int trickleLayerId, 
+			MatchProcessor matcher, MatchResolver resolver, AnimationController animController)
 		{
 			this.controller = controller;
 			this.matcher = matcher;
 			this.resolver = resolver;
 			this.board = board;
-			fieldsLayer = board.fieldsLayer;
-			trickleLayer = board.trickleLayer;
+			fieldsLayer = board.GetLayer<Field>(fieldsLayerId);
+			trickleLayer = board.GetLayer<TrickleState>(trickleLayerId);
 			this.animController = animController;
 		}
 

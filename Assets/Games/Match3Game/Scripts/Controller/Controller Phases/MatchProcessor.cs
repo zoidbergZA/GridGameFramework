@@ -18,16 +18,18 @@ namespace Match3
 		public int MatchCount { get { return matchGroups.Count; } }
 		public Matcher[] Matchers { get { return matchers; } }
 
-		public MatchProcessor(Board board)
+		public MatchProcessor(Board board, int fieldsLayerId, int matchesLayerId, int candidatesLayerId)
 		{
 			this.board = board;
-			fieldLayer = board.fieldsLayer;
-			matchesLayer = board.matchesLayer;
+			fieldLayer = board.GetLayer<Field>(fieldsLayerId);
+			matchesLayer = board.GetLayer<int>(matchesLayerId);
+
+			var candidatesLayer = board.GetLayer<int>(candidatesLayerId);
 
 			matchers = new Matcher[] 
 			{
-				new Matcher(InitBlockShapes(), fieldLayer, matchesLayer, board.candidatesLayer), 	//block matcher
-				new Matcher(InitLineShapes(), fieldLayer, matchesLayer, board.candidatesLayer) 		//line matcher
+				new Matcher(InitBlockShapes(), fieldLayer, matchesLayer, candidatesLayer), 	//block matcher
+				new Matcher(InitLineShapes(), fieldLayer, matchesLayer, candidatesLayer) 		//line matcher
 			};
 		}
 

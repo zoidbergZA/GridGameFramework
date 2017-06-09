@@ -18,10 +18,10 @@ namespace Match3
 
 		public int CandidateCount { get { return candidateGroups.Count; } }
 
-		public CandidateProcessor(Board board, MatchProcessor matcher)
+		public CandidateProcessor(Board board, int fieldsLayerId, int candidatesLayerId, MatchProcessor matcher)
 		{
-			fieldLayer = board.fieldsLayer;
-			candidatesLayer = board.candidatesLayer;
+			fieldLayer = board.GetLayer<Field>(fieldsLayerId);
+			candidatesLayer = board.GetLayer<int>(candidatesLayerId);
 			this.matcher = matcher;
 
 			boardSize = fieldLayer.GetDimensions();

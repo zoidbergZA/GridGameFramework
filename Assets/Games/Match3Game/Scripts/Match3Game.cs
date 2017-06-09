@@ -24,8 +24,7 @@ namespace Match3
 			{ GemColor.Lila, Color.green },
 		};
 
-		public const int WIDTH = 7;
-		public const int HEIGHT = 7;
+		public readonly Vec2 BOARD_SIZE = new Vec2(7, 7);
 
 		public TextAsset levelFile;
 		public TextAsset replayFile;
@@ -39,8 +38,14 @@ namespace Match3
 		private LevelLoader levelLoader = new LevelLoader();
 		private ReplayController replayController;
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
+	
+		//board and layers
 		private Board board;
-		
+		private int fieldsLayerId;
+		private int matchesLayerId;
+		private int candidatesLayerId;
+		private int trickeLayerId;
+
 		public Level Level { get; set; }
 		public ScoreKeeper ScoreKeeper { get; private set; }
 		public GameState GameState { get; private set; }
@@ -101,11 +106,22 @@ namespace Match3
 				InitialRandomState = Random.state;
 			}
 
-			board = new Board(new Vec2(WIDTH, HEIGHT));
+			//create board and layers
+			board = new Board(BOARD_SIZE);
+			var fieldsLayer = new BoardLayer<Field>(BOARD_SIZE);
+			var matchesLayer = new BoardLayer<int>(BOARD_SIZE);
+			var candidatesLayer = new BoardLayer<int>(BOARD_SIZE);
+			var trickleLayer = new BoardLayer<TrickleState>(BOARD_SIZE);
+
+			fieldsLayerId = board.AddLayer(fieldsLayer);
+			matchesLayerId = board.AddLayer(matchesLayer);
+			candidatesLayerId = board.AddLayer(candidatesLayer);
+			trickeLayerId = board.AddLayer(trickleLayer);
+
 			ScoreKeeper = new ScoreKeeper(Level);
 			
 			InitControllers(ScoreKeeper);
-			levelLoader.LoadLevel(Level, board.fieldsLayer);
+			levelLoader.LoadLevel(Level, fieldsLayer);
 
 			//register boardController event listeners
 			boardController.TurnEnded += OnTurnEnded;
@@ -114,8 +130,8 @@ namespace Match3
 			ScoreKeeper.ScoreChanged += OnScoreChanged;
 
 			//init views and HUD
-			boardView.InitView(board.fieldsLayer);
-			debugView.InitView(board.fieldsLayer, board.matchesLayer, board.candidatesLayer, board.trickleLayer);
+			boardView.InitView(fieldsLayer);
+			debugView.InitView(fieldsLayer, matchesLayer, candidatesLayer, trickleLayer);
 			gameDebugView.Init(this, boardController);
 			GameManager.Instance.hud.Init(this);
 
@@ -173,14 +189,17 @@ namespace Match3
 
 		public bool IsValidInput(SwapInput input)
 		{
+			var fieldsLayer = board.GetLayer<Field>(fieldsLayerId);
+
 			if (boardController.State != ControllerState.ReadyForInput || boardView.animationController.Playing)
 				return false;
-			if (!input.from.IsValidPosition(board.fieldsLayer) || !input.to.IsValidPosition(board.fieldsLayer))
+			if (!input.from.IsValidPosition(fieldsLayer) || !input.to.IsValidPosition(fieldsLayer))
 				return false;
-			if (board.fieldsLayer.cells[input.from.x, input.from.y].Gem == null)
+			if (fieldsLayer.cells[input.from.x, input.from.y].Gem == null)
 				return false;
-			if (board.fieldsLayer.cells[input.to.x, input.to.y].Gem == null)
+			if (fieldsLayer.cells[input.to.x, input.to.y].Gem == null)
 				return false;
+
 			//check adjacent
 			var delta = input.to - input.from;
 
@@ -217,18 +236,20 @@ namespace Match3
 			boardController = new BoardController<SwapInput>();
 
 			//add processor phases
-			var moveProcessor = new MoveProcessor(board, boardController, boardView.animationController);
-			var matchProcessor = new MatchProcessor(board);
+			var moveProcessor = new MoveProcessor(board, fieldsLayerId, boardController, boardView.animationController);
+			var matchProcessor = new MatchProcessor(board, fieldsLayerId, matchesLayerId, candidatesLayerId);
 			var resolver = new MatchResolver(matchProcessor, boardView.animationController, scoreKeeper);
-			var candidateProcessor = new CandidateProcessor(board, matchProcessor);
+			var candidateProcessor = new CandidateProcessor(board, fieldsLayerId, candidatesLayerId, matchProcessor);
 
 			boardController.phases.Add(moveProcessor);
 			boardController.phases.Add(matchProcessor);
 			boardController.phases.Add(new BadMoveProcessor(moveProcessor, matchProcessor, boardController));
 			boardController.phases.Add(resolver);
-			boardController.phases.Add(new Trickler(boardController, board, matchProcessor, resolver, boardView.animationController));
+			boardController.phases.Add(new Trickler(boardController, board, fieldsLayerId, trickeLayerId, 
+				matchProcessor, resolver, boardView.animationController));
 			boardController.phases.Add(candidateProcessor);
-			boardController.phases.Add(new ShuffleProcessor(board, candidateProcessor, boardView.animationController, boardController));
+			boardController.phases.Add(new ShuffleProcessor(board, fieldsLayerId, candidateProcessor, 
+				boardView.animationController, boardController));
 		}
 
 		private void OnInputHandled()

@@ -11,9 +11,9 @@ namespace Match3
         public BoardController<SwapInput> controller;
         public AnimationController animationController;
 
-        public MoveProcessor(Board board, BoardController<SwapInput> controller, AnimationController animationController)
+        public MoveProcessor(Board board, int fieldsLayerId, BoardController<SwapInput> controller, AnimationController animationController)
         {
-            fieldLayer = board.fieldsLayer;
+            fieldLayer = board.GetLayer<Field>(fieldsLayerId);
             this.controller = controller;
             this.animationController = animationController;
         }

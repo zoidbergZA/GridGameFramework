@@ -13,10 +13,10 @@ namespace Match3
 		private BoardController<SwapInput> controller;
 		private Board board;
 
-		public ShuffleProcessor(Board board, CandidateProcessor candidateProcessor,	AnimationController animController, BoardController<SwapInput> controller)
+		public ShuffleProcessor(Board board, int fieldsLayerId, CandidateProcessor candidateProcessor,	AnimationController animController, BoardController<SwapInput> controller)
 		{
 			this.board = board;
-			this.fieldsLayer = board.fieldsLayer;
+			this.fieldsLayer = board.GetLayer<Field>(fieldsLayerId);
 			this.candidateProcessor = candidateProcessor;
 			this.animController = animController;
 			this.controller = controller;
