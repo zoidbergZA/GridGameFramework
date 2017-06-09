@@ -7,10 +7,13 @@ public class BoardLayer<TLayer> : IGrid
 {
 	public TLayer[,] cells;
 
+	public string Name {get ; private set; }
 	public Vec2 Size { get; private set; }
+	public ILayerDebugger<TLayer> LayerDebugger { get; private set; }
 
-	public BoardLayer(Vec2 size)
+	public BoardLayer(string name, Vec2 size)
 	{
+		Name = name;
 		Size = size;
 
 		cells = new TLayer[size.x, size.y];
@@ -20,6 +23,11 @@ public class BoardLayer<TLayer> : IGrid
     {
         return Size;
     }
+
+	public void SetDebugger(ILayerDebugger<TLayer> layerDebugger)
+	{
+		LayerDebugger = layerDebugger;
+	}
 
 	public TLayer[,] GetSample(Stencil stencil, Vec2 anchor)
 	{

@@ -49,8 +49,8 @@ namespace Twenty48
 			//create board and layers
 			Vec2 boardSize = new Vec2(width, height);
 			board = new Board(boardSize);
-			tilesLayerId = board.AddLayer(new BoardLayer<int>(boardSize));
-			gravityLayerId = board.AddLayer(new BoardLayer<int>(boardSize));
+			tilesLayerId = board.AddLayer(new BoardLayer<int>("Tiles", boardSize));
+			gravityLayerId = board.AddLayer(new BoardLayer<int>("Gravity", boardSize));
 
 			InitControllers();
 			boardView.Init(boardSize);

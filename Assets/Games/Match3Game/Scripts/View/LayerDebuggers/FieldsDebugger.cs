@@ -5,11 +5,11 @@ using GridGame;
 
 namespace Match3
 {
-	public class FieldsDebbugger : LayerDebugger
+	public class FieldsDebbuggerOld : LayerDebugger
 	{
 		private BoardLayer<Field> fieldLayer;
 
-		public FieldsDebbugger(LayerDebugView layerView, BoardLayer<Field> fieldLayer) : base(layerView)
+		public FieldsDebbuggerOld(LayerDebugView layerView, BoardLayer<Field> fieldLayer) : base(layerView)
 		{
 			this.fieldLayer = fieldLayer;
 		}

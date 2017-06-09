@@ -73,7 +73,7 @@ namespace Match3
 
 			debugLayers = new LayerDebugView[]
 			{
-				InitLayerView("Fields Layer", fieldLayerView, boardSize, new FieldsDebbugger(fieldLayerView, fieldsLayer)),
+				InitLayerView("Fields Layer", fieldLayerView, boardSize, new FieldsDebbuggerOld(fieldLayerView, fieldsLayer)),
 				InitLayerView("Matches Layer", matchesLayerView, boardSize, new MatchesDebugger(matchesLayerView, matchesLayer)),
 				InitLayerView("Trickle Layer", trickleLayerView, boardSize, new TrickleDebugger(trickleLayerView, trickleLayer)),
 				InitLayerView("Candidates Layer", candidateLayerView, boardSize, new CandidatesDebugger(candidateLayerView, candidatesLayer))
