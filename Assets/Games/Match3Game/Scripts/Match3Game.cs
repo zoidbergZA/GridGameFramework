@@ -108,10 +108,12 @@ namespace Match3
 
 			//create board and layers
 			board = new Board(BOARD_SIZE);
-			var fieldsLayer = new BoardLayer<Field>("Fields", BOARD_SIZE, LayerDebuggers.FieldsDebugger);
-			var matchesLayer = new BoardLayer<int>("Matches", BOARD_SIZE, LayerDebuggers.MatchesDebugger);
-			var candidatesLayer = new BoardLayer<int>("Candidates", BOARD_SIZE, LayerDebuggers.CandidatesDebugger);
-			var trickleLayer = new BoardLayer<TrickleState>("Trickle", BOARD_SIZE, LayerDebuggers.TrickleDebugger);
+			var debuggers = new LayerDebuggers();
+
+			var fieldsLayer = new BoardLayer<Field>("Fields", BOARD_SIZE, debuggers.FieldsDebugger);
+			var matchesLayer = new BoardLayer<int>("Matches", BOARD_SIZE, debuggers.MatchesDebugger);
+			var candidatesLayer = new BoardLayer<int>("Candidates", BOARD_SIZE, debuggers.CandidatesDebugger);
+			var trickleLayer = new BoardLayer<TrickleState>("Trickle", BOARD_SIZE, debuggers.TrickleDebugger);
 
 			fieldsLayerId = board.AddLayer(fieldsLayer);
 			matchesLayerId = board.AddLayer(matchesLayer);
@@ -131,7 +133,7 @@ namespace Match3
 
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
-			layerViewer.Init(board, boardController);
+			layerViewer.Init(board, boardController, debuggers);
 			gameDebugView.Init(this, boardController);
 			GameManager.Instance.hud.Init(this);
 

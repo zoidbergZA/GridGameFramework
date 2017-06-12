@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using GridGame;
 
-public class BoardLayer<TLayer> : IGrid, IDebugable
+public class BoardLayer<TLayer> : IGrid, IGenericLayer
 {
 	public TLayer[,] cells;
 
@@ -55,7 +55,7 @@ public class BoardLayer<TLayer> : IGrid, IDebugable
         return Name;
     }
 
-    public string[,] GetLayerState()
+    public string[,] GetDebugState()
     {
         if (IsDebugable)
 		{

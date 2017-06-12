@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace GridGame
 {
-	public interface IDebugable
+	public interface IGenericLayer
 	{
 		string GetLayerName();
 
-		string[,] GetLayerState();
+		string[,] GetDebugState();
 	}
 }

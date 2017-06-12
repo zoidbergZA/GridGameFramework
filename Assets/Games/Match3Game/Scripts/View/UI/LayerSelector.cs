@@ -12,9 +12,9 @@ namespace Match3
 		public Text buttonText;
 
 		private LayerViewer layerViewer;
-		private IDebugable layer;
+		private IGenericLayer layer;
 
-		public void Init(LayerViewer viewer, IDebugable layer)
+		public void Init(LayerViewer viewer, IGenericLayer layer)
 		{
 			layerViewer = viewer;
 			this.layer = layer;

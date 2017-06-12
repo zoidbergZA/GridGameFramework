@@ -7,7 +7,7 @@ public class BoardController<TInput>
     public delegate void Evt();
     public delegate void TurnEvt(bool cancelled);
     public delegate void PhaseEvt(int phase, string phaseName);
-    public delegate void DebugEvt(IDebugable layer);
+    public delegate void DebugEvt(IGenericLayer layer);
 
     public event Evt ValidInputHandled;
     public event TurnEvt TurnEnded;
@@ -16,7 +16,7 @@ public class BoardController<TInput>
 
 	public List<ControllerPhase> Phases { get; private set;}
 
-    private Dictionary<ControllerPhase, IDebugable> phaseLayerMap = new Dictionary<ControllerPhase, IDebugable>(); 
+    private Dictionary<ControllerPhase, IGenericLayer> phaseLayerMap = new Dictionary<ControllerPhase, IGenericLayer>(); 
 
     public ControllerState State { 
         get 
@@ -54,7 +54,7 @@ public class BoardController<TInput>
         CurrentPhase = -2;
     }
 
-    public void AddPhase(ControllerPhase phase, IDebugable debugLayer)
+    public void AddPhase(ControllerPhase phase, IGenericLayer debugLayer)
     {
         Phases.Add(phase);
         phaseLayerMap.Add(phase, debugLayer);

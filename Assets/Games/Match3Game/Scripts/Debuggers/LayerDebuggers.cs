@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using GridGame;
+using UnityEngine;
 
 namespace Match3
 {
-	public static class LayerDebuggers
+	public class LayerDebuggers : IDebugColorizer
 	{
-		public static Func<Field, string> FieldsDebugger = (field) => 
+		public Func<Field, string> FieldsDebugger = (field) => 
 		{
 			if (field != null)
 			{
@@ -20,7 +21,7 @@ namespace Match3
 			return "null";
 		};
 
-		public static Func<int, string> MatchesDebugger = (cell) => 
+		public Func<int, string> MatchesDebugger = (cell) => 
 		{
 			if (cell == 0)
 				return "none";
@@ -29,7 +30,7 @@ namespace Match3
 			return "null";
 		};
 
-		public static Func<int, string> CandidatesDebugger = (cell) => 
+		public Func<int, string> CandidatesDebugger = (cell) => 
 		{
 			if (cell == 0)
 				return "none";
@@ -38,13 +39,60 @@ namespace Match3
 			else if (cell == 2)
 				return "free";
 			else if (cell == 3)
-				return "options";
+				return "option";
 			return "null";
 		};
 
-		public static Func<TrickleState, string> TrickleDebugger = (cell) => 
+		public Func<TrickleState, string> TrickleDebugger = (cell) => 
 		{
 			return cell.ToString();
 		};
-	}
+
+        public Color GetColor(string debugState)
+        {
+            Color output = Color.clear;
+
+			switch (debugState)
+			{
+				case "Pink":
+					output = new Color(1f, 0.38f, 0.41f);
+					break;
+				case "Blue":
+					output = new Color(0f, 0f, 1f);
+					break;
+				case "Orange":
+					output = new Color(1f, 0.65f, 0f);
+					break;
+				case "Yellow":
+					output = new Color(1f, 1f, 0f);
+					break;
+				case "Lila":
+					output = new Color(0.8f, 0.65f, 0.8f);
+					break;
+				case "match":
+					output = Color.blue;
+					break;
+				case "option":
+					output = Color.white;
+					break;
+				case "free":
+					output = Color.green;
+					break;
+				case "Fixed":
+					output = Color.white;
+					break;
+				case "Open":
+					output = Color.red;
+					break;
+				case "Falling":
+					output = Color.blue;
+					break;
+				case "Landed":
+					output = Color.green;
+					break;
+			}
+
+			return output;
+        }
+    }
 }

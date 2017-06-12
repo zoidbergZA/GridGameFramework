@@ -15,14 +15,16 @@ namespace Match3
 		private RectTransform boardDebugRect;
 		private Board board;
 		private BoardController<SwapInput> controller;
-		private Dictionary<IDebugable, LayerSelector> layerMap = new Dictionary<IDebugable, LayerSelector>();
+		private IDebugColorizer colorizer;
+		private Dictionary<IGenericLayer, LayerSelector> layerMap = new Dictionary<IGenericLayer, LayerSelector>();
 		private CellDebugView[,] cellViews;
 		private float opacity = 0.3f;
 
-		public void Init(Board board, BoardController<SwapInput> controller)
+		public void Init(Board board, BoardController<SwapInput> controller, IDebugColorizer colorizer)
 		{
 			this.board = board;
 			this.controller = controller;
+			this.colorizer = colorizer;
 
 			CreateDebugPanel();
 			CreateCellViews();
@@ -31,17 +33,19 @@ namespace Match3
 			controller.DebugEvent += OnDebugEvent;			
 		}
 
-		public void RefreshView(IDebugable layer)
+		public void RefreshView(IGenericLayer layer)
 		{
 			Debug.Log("refresh layer: " + layer.GetLayerName());
 
-			var debugInfo = layer.GetLayerState();
+			var debugInfo = layer.GetDebugState();
 
 			for (int x = 0; x < debugInfo.GetLength(0); x++)
 			{
 				for (int y = 0; y < debugInfo.GetLength(1); y++)
 				{
-					cellViews[x, y].Refresh(Color.white, debugInfo[x, y]);
+					var color = colorizer.GetColor(debugInfo[x, y]);
+ 
+					cellViews[x, y].Refresh(color, debugInfo[x, y], opacity);
 				}
 			}
 		}
@@ -101,7 +105,7 @@ namespace Match3
 			return cellView;
 		}
 
-		private void OnDebugEvent(IDebugable layer)
+		private void OnDebugEvent(IGenericLayer layer)
 		{
 			RefreshView(layer);
 		}

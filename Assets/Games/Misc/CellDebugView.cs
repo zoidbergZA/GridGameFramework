@@ -10,8 +10,11 @@ public class CellDebugView : MonoBehaviour
 
 	public RectTransform RectTransform { get { return GetComponent<RectTransform>(); } }
 
-	public void Refresh(Color color, string text = null)
+	public void Refresh(Color color, string text = null, float opacity = 1f)
 	{
+		color.a = opacity;
+		cellBackground.color = color;
+
 		if (text != null)
 			cellText.text = text;
 		else
