@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using GridGame;
 
 namespace Match3
 {
@@ -9,29 +10,23 @@ namespace Match3
 	{
 		public Button selectorButton;
 		public Text buttonText;
-		// public Toggle toggle;
 
-		// public bool IsDisabled { get { return layerView.gameObject.activeSelf; } }
+		private LayerViewer layerViewer;
+		private IDebugable layer;
 
-		public void Init(string name)
+		public void Init(LayerViewer viewer, IDebugable layer)
 		{
-			// layerView = layerDebugView;
+			layerViewer = viewer;
+			this.layer = layer;
 
-			// name = layerView.name;
-			buttonText.text = name;
+			buttonText.text = layer.GetLayerName();
 
-			// toggle.onValueChanged.AddListener(onToggle);
-
-			// if (startDisabled)
-			// {
-			// 	toggle.isOn = false;
-			// 	layerView.gameObject.SetActive(false);
-			// }
+			selectorButton.onClick.AddListener(OnClick);
 		}
 
-		// private void onToggle(bool activated)
-		// {
-		// 	// layerView.gameObject.SetActive(activated);
-		// }
+		private void OnClick()
+		{
+			layerViewer.RefreshView(layer);
+		}
 	}
 }

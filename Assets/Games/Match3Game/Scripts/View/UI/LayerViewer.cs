@@ -14,29 +14,47 @@ namespace Match3
 
 		private RectTransform boardDebugRect;
 		private Board board;
-		private LayerSelector[] layerSelectors;
+		private BoardController<SwapInput> controller;
+		private Dictionary<IDebugable, LayerSelector> layerMap = new Dictionary<IDebugable, LayerSelector>();
 		private CellDebugView[,] cellViews;
+		private float opacity = 0.3f;
 
-		public void Init(Board board)
+		public void Init(Board board, BoardController<SwapInput> controller)
 		{
 			this.board = board;
+			this.controller = controller;
 
 			CreateDebugPanel();
 			CreateCellViews();
 			CreateSelectorButtons();
-			
+
+			controller.DebugEvent += OnDebugEvent;			
+		}
+
+		public void RefreshView(IDebugable layer)
+		{
+			Debug.Log("refresh layer: " + layer.GetLayerName());
+
+			var debugInfo = layer.GetLayerState();
+
+			for (int x = 0; x < debugInfo.GetLength(0); x++)
+			{
+				for (int y = 0; y < debugInfo.GetLength(1); y++)
+				{
+					cellViews[x, y].Refresh(Color.white, debugInfo[x, y]);
+				}
+			}
 		}
 
 		private void CreateSelectorButtons()
 		{
-			layerSelectors = new LayerSelector[board.layers.Count];
-
-			for (int i = 0; i < layerSelectors.Length; i++)
+			foreach (var kvp in board.layers)
 			{
-				layerSelectors[i] = Instantiate(protoLayerSelector);
-				layerSelectors[i].transform.SetParent(protoLayerSelector.transform.parent);
-				layerSelectors[i].transform.localScale = Vector3.one;
-				layerSelectors[i].Init("layer " + i);
+				var selector = Instantiate(protoLayerSelector);
+				selector.transform.SetParent(protoLayerSelector.transform.parent);
+				selector.transform.localScale = Vector3.one;
+				selector.Init(this, kvp.Value);
+				layerMap.Add(kvp.Value, selector);
 			}
 
 			protoLayerSelector.gameObject.SetActive(false);
@@ -78,8 +96,14 @@ namespace Match3
 
 			var viewPosition = new Vector2(position.x * cellSize.x, position.y * cellSize.y);
 			cellView.RectTransform.anchoredPosition = viewPosition;
+			cellView.cellBackground.color = new Color(1, 1, 1, opacity);
 
 			return cellView;
+		}
+
+		private void OnDebugEvent(IDebugable layer)
+		{
+			RefreshView(layer);
 		}
 	}
 }

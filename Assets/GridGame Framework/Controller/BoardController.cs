@@ -7,12 +7,16 @@ public class BoardController<TInput>
     public delegate void Evt();
     public delegate void TurnEvt(bool cancelled);
     public delegate void PhaseEvt(int phase, string phaseName);
+    public delegate void DebugEvt(IDebugable layer);
 
     public event Evt ValidInputHandled;
     public event TurnEvt TurnEnded;
     public event PhaseEvt PhaseEnded;
+    public event DebugEvt DebugEvent;
 
-	public List<ControllerPhase> Phases = new List<ControllerPhase>();
+	public List<ControllerPhase> Phases { get; private set;}
+
+    private Dictionary<ControllerPhase, IDebugable> phaseLayerMap = new Dictionary<ControllerPhase, IDebugable>(); 
 
     public ControllerState State { 
         get 
@@ -35,6 +39,7 @@ public class BoardController<TInput>
 
     public BoardController()
     {
+        Phases = new List<ControllerPhase>();
         CurrentPhase = -2; //set phase to Disabled
     }
 
@@ -47,6 +52,12 @@ public class BoardController<TInput>
     public void Stop()
     {
         CurrentPhase = -2;
+    }
+
+    public void AddPhase(ControllerPhase phase, IDebugable debugLayer)
+    {
+        Phases.Add(phase);
+        phaseLayerMap.Add(phase, debugLayer);
     }
 
     public bool HandleInput(TInput input)
@@ -95,6 +106,14 @@ public class BoardController<TInput>
         //check if tick cancelled the turn
         if (State == ControllerState.ReadyForInput)
             return new BoardAlert[] { new BoardAlert(Vec2.invalid, Vec2.invalid, "turn cancelled") };
+
+        if (phaseLayerMap[Phases[CurrentPhase]] != null)
+        {
+            if (DebugEvent != null)
+            {
+                DebugEvent(phaseLayerMap[Phases[CurrentPhase]]);
+            }
+        }
 
         return result;
     }

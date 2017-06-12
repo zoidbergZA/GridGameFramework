@@ -9,4 +9,12 @@ public class CellDebugView : MonoBehaviour
 	public Text cellText;
 
 	public RectTransform RectTransform { get { return GetComponent<RectTransform>(); } }
+
+	public void Refresh(Color color, string text = null)
+	{
+		if (text != null)
+			cellText.text = text;
+		else
+			cellText.text = "";
+	}
 }

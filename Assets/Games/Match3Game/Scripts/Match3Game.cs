@@ -131,7 +131,7 @@ namespace Match3
 
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
-			layerViewer.Init(board);
+			layerViewer.Init(board, boardController);
 			gameDebugView.Init(this, boardController);
 			GameManager.Instance.hud.Init(this);
 
@@ -246,13 +246,21 @@ namespace Match3
 			var shuffler = new ShuffleProcessor(board, fieldsLayerId, candidateProcessor, 
 				boardView.animationController, boardController);
 
-			boardController.Phases.Add(moveProcessor);
-			boardController.Phases.Add(matchProcessor);
-			boardController.Phases.Add(badMoveProcessor);
-			boardController.Phases.Add(resolver);
-			boardController.Phases.Add(trickler);
-			boardController.Phases.Add(candidateProcessor);
-			boardController.Phases.Add(shuffler);
+			boardController.AddPhase(moveProcessor, board.GetLayer<Field>(fieldsLayerId));
+			boardController.AddPhase(matchProcessor, board.GetLayer<int>(matchesLayerId));
+			boardController.AddPhase(badMoveProcessor, null);
+			boardController.AddPhase(resolver, board.GetLayer<int>(matchesLayerId));
+			boardController.AddPhase(trickler, board.GetLayer<TrickleState>(trickeLayerId));
+			boardController.AddPhase(candidateProcessor, board.GetLayer<int>(candidatesLayerId));
+			boardController.AddPhase(shuffler, null);
+
+			// boardController.Phases.Add(moveProcessor);
+			// boardController.Phases.Add(matchProcessor);
+			// boardController.Phases.Add(badMoveProcessor);
+			// boardController.Phases.Add(resolver);
+			// boardController.Phases.Add(trickler);
+			// boardController.Phases.Add(candidateProcessor);
+			// boardController.Phases.Add(shuffler);
 		}
 
 		private void OnInputHandled()
