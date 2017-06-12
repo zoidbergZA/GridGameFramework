@@ -12,7 +12,7 @@ public class BoardController<TInput>
     public event TurnEvt TurnEnded;
     public event PhaseEvt PhaseEnded;
 
-	public List<ControllerPhase> phases = new List<ControllerPhase>();
+	public List<ControllerPhase> Phases = new List<ControllerPhase>();
 
     public ControllerState State { 
         get 
@@ -77,18 +77,18 @@ public class BoardController<TInput>
             return null;
 
         //check if previous tick completed phase
-        if (phases[CurrentPhase].State == PhaseState.Done)
+        if (Phases[CurrentPhase].State == PhaseState.Done)
         {
             if (PhaseEnded != null)
             {
-                PhaseEnded(CurrentPhase, phases[CurrentPhase].GetType().ToString());
+                PhaseEnded(CurrentPhase, Phases[CurrentPhase].GetType().ToString());
             }
 
             StartNextPhase();    
             return null;
         }
 
-        var result = phases[CurrentPhase].Tick();
+        var result = Phases[CurrentPhase].Tick();
     
         Ticks++;
         
@@ -111,26 +111,26 @@ public class BoardController<TInput>
 
         while (true)
         {
-            if (CurrentPhase >= phases.Count)
+            if (CurrentPhase >= Phases.Count)
             {
                 HandleTurnComplete();
                 break;
             }
             else
             {
-                if (phases[CurrentPhase].Disabled)
+                if (Phases[CurrentPhase].Disabled)
                 {
                     CurrentPhase++;
                     continue;
                 }
                 else
                 {
-                    if (phases[CurrentPhase].State != PhaseState.Ready)
+                    if (Phases[CurrentPhase].State != PhaseState.Ready)
                     {
-                        throw new System.Exception("next phase is not in ready state, but was called to start! " + phases[CurrentPhase].GetType());
+                        throw new System.Exception("next phase is not in ready state, but was called to start! " + Phases[CurrentPhase].GetType());
                     }
 
-                    phases[CurrentPhase].Start();
+                    Phases[CurrentPhase].Start();
                     break;       
                 }
             }    
@@ -146,19 +146,19 @@ public class BoardController<TInput>
 
         CurrentPhase = index;
 
-        for (int i = index; i < phases.Count; i++)
+        for (int i = index; i < Phases.Count; i++)
         {
-            phases[i].Reset();
+            Phases[i].Reset();
         }
 
-        phases[CurrentPhase].Start();
+        Phases[CurrentPhase].Start();
     }
 
     private int GetPhaseIndex(ControllerPhase phase)
     {
-        for (int i = 0; i < phases.Count; i++)
+        for (int i = 0; i < Phases.Count; i++)
         {
-            if (phases[i] == phase)
+            if (Phases[i] == phase)
                 return i;
         }
 
@@ -172,7 +172,7 @@ public class BoardController<TInput>
             Turn++;
         }
 
-        foreach (var phase in phases)
+        foreach (var phase in Phases)
         {
             phase.Reset();
         }

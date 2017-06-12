@@ -42,7 +42,7 @@ namespace Match3
 
 			if (controller.State == ControllerState.Working)
 			{
-				phaseString += ": " + controller.phases[controller.CurrentPhase].GetType();
+				phaseString += ": " + controller.Phases[controller.CurrentPhase].GetType();
 			}
 
 			phaseText.text = phaseString;

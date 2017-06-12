@@ -18,7 +18,7 @@ namespace GridGame
 			size = layer.GetDimensions();
 		}
 
-		public string[,] GetDebugState()
+        public string[,] GetLayerState()
 		{
 			string[,] output = new string[size.x, size.y];
 

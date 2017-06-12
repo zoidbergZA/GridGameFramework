@@ -7,7 +7,7 @@ namespace GridGame
 	public class Board
 	{
 		public Vec2 Size { get; private set; }
-		public Dictionary<int, object> layers = new Dictionary<int, object>();
+		public Dictionary<int, IDebugable> layers = new Dictionary<int, IDebugable>();
 
 		public Board(Vec2 size)
 		{

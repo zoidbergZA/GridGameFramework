@@ -31,7 +31,7 @@ namespace Match3
 		public bool tickStepped;
 		public bool alertStepped;
 		public BoardView boardView;
-		public BoardDebugView debugView;
+		public LayerViewer layerViewer;
 		public GameDebugView gameDebugView;
 		public BoardController<SwapInput> boardController;
 		
@@ -77,14 +77,14 @@ namespace Match3
 				{
 					if (alertStepped)
 					{
-						debugView.ShowNextAlert();
+						// debugView.ShowNextAlert();
 					}
 					else
 					{
-						while (debugView.AlertIndex < lastTickAlerts.Length)
-						{
-							debugView.ShowNextAlert();
-						}
+						// while (debugView.AlertIndex < lastTickAlerts.Length)
+						// {
+						// 	debugView.ShowNextAlert();
+						// }
 					}
 				}
 			}
@@ -131,7 +131,7 @@ namespace Match3
 
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
-			debugView.InitView(fieldsLayer, matchesLayer, candidatesLayer, trickleLayer);
+			layerViewer.Init(board);
 			gameDebugView.Init(this, boardController);
 			GameManager.Instance.hud.Init(this);
 
@@ -180,7 +180,7 @@ namespace Match3
 				{
 					HandleTick();
 					boardView.animationController.PlayAnimations();
-					debugView.RefreshBoardAlerts(lastTickAlerts);
+					// debugView.RefreshBoardAlerts(lastTickAlerts);
 					
 					PrintTickResults(lastTickAlerts);
 				}
@@ -221,7 +221,7 @@ namespace Match3
 					yield return new WaitForSeconds(animationTime);
 				}
 				
-				debugView.RefreshBoardAlerts(lastTickAlerts);
+				// debugView.RefreshBoardAlerts(lastTickAlerts);
 			}
 		}
 
@@ -238,18 +238,21 @@ namespace Match3
 			//add processor phases
 			var moveProcessor = new MoveProcessor(board, fieldsLayerId, boardController, boardView.animationController);
 			var matchProcessor = new MatchProcessor(board, fieldsLayerId, matchesLayerId, candidatesLayerId);
+			var badMoveProcessor = new BadMoveProcessor(moveProcessor, matchProcessor, boardController);
 			var resolver = new MatchResolver(matchProcessor, boardView.animationController, scoreKeeper);
 			var candidateProcessor = new CandidateProcessor(board, fieldsLayerId, candidatesLayerId, matchProcessor);
+			var trickler = new Trickler(boardController, board, fieldsLayerId, trickeLayerId, 
+				matchProcessor, resolver, boardView.animationController);
+			var shuffler = new ShuffleProcessor(board, fieldsLayerId, candidateProcessor, 
+				boardView.animationController, boardController);
 
-			boardController.phases.Add(moveProcessor);
-			boardController.phases.Add(matchProcessor);
-			boardController.phases.Add(new BadMoveProcessor(moveProcessor, matchProcessor, boardController));
-			boardController.phases.Add(resolver);
-			boardController.phases.Add(new Trickler(boardController, board, fieldsLayerId, trickeLayerId, 
-				matchProcessor, resolver, boardView.animationController));
-			boardController.phases.Add(candidateProcessor);
-			boardController.phases.Add(new ShuffleProcessor(board, fieldsLayerId, candidateProcessor, 
-				boardView.animationController, boardController));
+			boardController.Phases.Add(moveProcessor);
+			boardController.Phases.Add(matchProcessor);
+			boardController.Phases.Add(badMoveProcessor);
+			boardController.Phases.Add(resolver);
+			boardController.Phases.Add(trickler);
+			boardController.Phases.Add(candidateProcessor);
+			boardController.Phases.Add(shuffler);
 		}
 
 		private void OnInputHandled()

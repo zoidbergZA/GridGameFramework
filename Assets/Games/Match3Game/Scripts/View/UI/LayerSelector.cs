@@ -7,32 +7,31 @@ namespace Match3
 {
 	public class LayerSelector : MonoBehaviour 
 	{
-		public Text nameText;
-		public Toggle toggle;
+		public Button selectorButton;
+		public Text buttonText;
+		// public Toggle toggle;
 
-		private LayerDebugView layerView;
+		// public bool IsDisabled { get { return layerView.gameObject.activeSelf; } }
 
-		public bool IsDisabled { get { return layerView.gameObject.activeSelf; } }
-
-		public void Init(LayerDebugView layerDebugView, bool startDisabled = true)
+		public void Init(string name)
 		{
-			layerView = layerDebugView;
+			// layerView = layerDebugView;
 
-			name = layerView.name;
-			nameText.text = name;
+			// name = layerView.name;
+			buttonText.text = name;
 
-			toggle.onValueChanged.AddListener(onToggle);
+			// toggle.onValueChanged.AddListener(onToggle);
 
-			if (startDisabled)
-			{
-				toggle.isOn = false;
-				layerView.gameObject.SetActive(false);
-			}
+			// if (startDisabled)
+			// {
+			// 	toggle.isOn = false;
+			// 	layerView.gameObject.SetActive(false);
+			// }
 		}
 
-		private void onToggle(bool activated)
-		{
-			layerView.gameObject.SetActive(activated);
-		}
+		// private void onToggle(bool activated)
+		// {
+		// 	// layerView.gameObject.SetActive(activated);
+		// }
 	}
 }

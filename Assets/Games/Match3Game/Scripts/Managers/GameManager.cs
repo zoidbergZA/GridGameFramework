@@ -29,12 +29,10 @@ namespace Match3
         public SpriteManager spriteManager;
         public Hud hud;
         public bool debugMode;
-        public BoardDebugView boardDebugView;
         public GameObject debugUI;
 
         void Awake()
         {
-            boardDebugView.gameObject.SetActive(debugMode);
             debugUI.SetActive(debugMode);
         }
     }

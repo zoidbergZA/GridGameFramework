@@ -82,8 +82,8 @@ namespace Twenty48
 			boardController = new BoardController<MoveDirection>();
 		
 			//add controller phases
-			boardController.phases.Add(new MoveProcessor());
-			boardController.phases.Add(new GravityProcessor());
+			boardController.Phases.Add(new MoveProcessor());
+			boardController.Phases.Add(new GravityProcessor());
 		}
 
 		private IEnumerator HandleTickLoop()

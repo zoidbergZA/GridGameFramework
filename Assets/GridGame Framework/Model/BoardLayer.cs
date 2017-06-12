@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using GridGame;
 
-public class BoardLayer<TLayer> : IGrid
+public class BoardLayer<TLayer> : IGrid, IDebugable
 {
 	public TLayer[,] cells;
 
 	public string Name {get ; private set; }
 	public Vec2 Size { get; private set; }
 	public LayerDebugger<TLayer> LayerDebugger { get; private set; }
+	public bool IsDebugable { get { return LayerDebugger != null; } }
 
 	public BoardLayer(string name, Vec2 size, Func<TLayer, string> debuggerFunc = null)
 	{
@@ -48,4 +49,21 @@ public class BoardLayer<TLayer> : IGrid
 
 		return samples;
 	}
+
+    public string GetLayerName()
+    {
+        return Name;
+    }
+
+    public string[,] GetLayerState()
+    {
+        if (IsDebugable)
+		{
+			return LayerDebugger.GetLayerState();
+		}
+		else
+		{
+			return null;
+		}
+    }
 }
