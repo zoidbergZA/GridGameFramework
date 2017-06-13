@@ -27,6 +27,8 @@ namespace Match3
 				return "none";
 			else if (cell == 1)
 				return "match";
+			else if (cell == -1)
+				return "matchResolved";
 			return "null";
 		};
 
@@ -71,6 +73,9 @@ namespace Match3
 					break;
 				case "match":
 					output = Color.blue;
+					break;
+				case "matchResolved":
+					output = Color.red;
 					break;
 				case "option":
 					output = Color.white;
