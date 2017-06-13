@@ -24,6 +24,7 @@ namespace Match3
 		private float opacity = 0.3f;
 		private float opacityChangedAt = float.MinValue;
 
+		public bool IsInitialized { get; private set; }
 		public bool IsOn 
 		{ 
 			get { return enabledToggle.isOn; } 
@@ -42,9 +43,12 @@ namespace Match3
 			CreateDebugPanel();
 			CreateCellViews();
 			CreateSelectorButtons();
-			ClearView();
+			ToggleIsOn(IsOn);
 
-			controller.DebugEvent += OnDebugEvent;			
+			controller.DebugEvent += OnDebugEvent;
+			enabledToggle.onValueChanged.AddListener(OnToggleEnabled);
+
+			IsInitialized = true;			
 		}
 
 		public void SelectLayer(IGenericLayer layer)
@@ -70,6 +74,9 @@ namespace Match3
 
 		public void OnToggleEnabled(bool newValue)
 		{
+			if (!IsInitialized)
+				return;
+
 			ToggleIsOn(enabledToggle.isOn);
 		}
 
@@ -86,6 +93,7 @@ namespace Match3
 
 		private void ToggleIsOn(bool on)
 		{
+
 			boardDebugRect.gameObject.SetActive(on);
 			
 			if (on)

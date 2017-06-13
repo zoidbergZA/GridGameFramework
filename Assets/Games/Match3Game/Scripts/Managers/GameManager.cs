@@ -28,12 +28,5 @@ namespace Match3
 
         public SpriteManager spriteManager;
         public Hud hud;
-        public bool debugMode;
-        public GameObject debugUI;
-
-        void Awake()
-        {
-            debugUI.SetActive(debugMode);
-        }
     }
 }
