@@ -6,7 +6,7 @@ namespace GridGame
 	public interface IGenericLayer
 	{
 		string GetLayerName();
-
+		bool GetIsDebugable();
 		string[,] GetDebugState();
 	}
 }

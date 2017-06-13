@@ -66,4 +66,9 @@ public class BoardLayer<TLayer> : IGrid, IGenericLayer
 			return null;
 		}
     }
+
+    public bool GetIsDebugable()
+    {
+        return IsDebugable;
+    }
 }

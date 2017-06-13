@@ -11,41 +11,120 @@ namespace Match3
 		public RectTransform boardRect;
 		public CellDebugView cellViewPrefab;
 		public LayerSelector protoLayerSelector;
+		public Slider opacitySlider;
+		public Toggle enabledToggle;
 
 		private RectTransform boardDebugRect;
 		private Board board;
 		private BoardController<SwapInput> controller;
 		private IDebugColorizer colorizer;
 		private Dictionary<IGenericLayer, LayerSelector> layerMap = new Dictionary<IGenericLayer, LayerSelector>();
+		private IGenericLayer selectedLayer;
 		private CellDebugView[,] cellViews;
 		private float opacity = 0.3f;
+		private float opacityChangedAt = float.MinValue;
 
-		public void Init(Board board, BoardController<SwapInput> controller, IDebugColorizer colorizer)
+		public bool IsOn 
+		{ 
+			get { return enabledToggle.isOn; } 
+			private set { enabledToggle.isOn = value; }
+		}
+
+		public void Init(Board board, BoardController<SwapInput> controller, IDebugColorizer colorizer, bool startOn)
 		{
 			this.board = board;
 			this.controller = controller;
 			this.colorizer = colorizer;
 
+			opacity = opacitySlider.value;
+			IsOn = startOn;
+
 			CreateDebugPanel();
 			CreateCellViews();
 			CreateSelectorButtons();
+			ClearView();
 
 			controller.DebugEvent += OnDebugEvent;			
 		}
 
-		public void RefreshView(IGenericLayer layer)
+		public void SelectLayer(IGenericLayer layer)
 		{
-			Debug.Log("refresh layer: " + layer.GetLayerName());
-
-			var debugInfo = layer.GetDebugState();
-
-			for (int x = 0; x < debugInfo.GetLength(0); x++)
+			if (selectedLayer != null)
 			{
-				for (int y = 0; y < debugInfo.GetLength(1); y++)
+				layerMap[selectedLayer].HandleViewSelected(false);
+			}
+
+			if (selectedLayer != layer)
+			{
+				selectedLayer = layer;
+				layerMap[layer].HandleViewSelected(true);
+
+				RefreshView();
+			}
+			else
+			{
+				selectedLayer = null;
+				ClearView();
+			}
+		}
+
+		public void OnToggleEnabled(bool newValue)
+		{
+			ToggleIsOn(enabledToggle.isOn);
+		}
+
+		public void OnOpacitySliderChange(float newValue)
+		{
+			if (Time.time < opacityChangedAt + 0.1f)
+				return;
+
+			opacity = opacitySlider.value;
+			opacityChangedAt = Time.time;
+
+			RefreshView();
+		}
+
+		private void ToggleIsOn(bool on)
+		{
+			boardDebugRect.gameObject.SetActive(on);
+			
+			if (on)
+			{
+				RefreshView();
+			}
+		}
+
+		private void RefreshView()
+		{
+			if (selectedLayer == null)
+			{
+				ClearView();
+				return;
+			}
+
+			if (selectedLayer.GetIsDebugable())
+			{
+				var debugInfo = selectedLayer.GetDebugState();
+
+				for (int x = 0; x < debugInfo.GetLength(0); x++)
 				{
-					var color = colorizer.GetColor(debugInfo[x, y]);
- 
-					cellViews[x, y].Refresh(color, debugInfo[x, y], opacity);
+					for (int y = 0; y < debugInfo.GetLength(1); y++)
+					{
+						var color = colorizer.GetColor(debugInfo[x, y]);
+	
+						cellViews[x, y].Refresh(color, debugInfo[x, y], opacity);
+					}
+				}
+			}
+		}
+
+		private void ClearView()
+		{
+			for (int x = 0; x < cellViews.GetLength(0); x++)
+			{
+				for (int y = 0; y < cellViews.GetLength(1); y++)
+				{
+					cellViews[x, y].Refresh(Color.clear, "", opacity);
 				}
 			}
 		}
@@ -107,7 +186,10 @@ namespace Match3
 
 		private void OnDebugEvent(IGenericLayer layer)
 		{
-			RefreshView(layer);
+			if (selectedLayer != layer)
+				SelectLayer(layer);
+			else
+				RefreshView();
 		}
 	}
 }

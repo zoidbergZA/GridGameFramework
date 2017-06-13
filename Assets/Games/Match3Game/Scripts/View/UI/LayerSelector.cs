@@ -21,12 +21,24 @@ namespace Match3
 
 			buttonText.text = layer.GetLayerName();
 
-			selectorButton.onClick.AddListener(OnClick);
+			if (layer.GetIsDebugable())
+			{
+				selectorButton.onClick.AddListener(OnClick);
+			}
+			else
+			{
+				selectorButton.interactable = false;
+			}
+		}
+
+		public void HandleViewSelected(bool selected)
+		{
+			selectorButton.GetComponent<Image>().color = selected ? Color.green : Color.white;
 		}
 
 		private void OnClick()
 		{
-			layerViewer.RefreshView(layer);
+			layerViewer.SelectLayer(layer);
 		}
 	}
 }

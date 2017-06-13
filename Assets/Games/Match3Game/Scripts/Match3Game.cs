@@ -133,7 +133,7 @@ namespace Match3
 
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
-			layerViewer.Init(board, boardController, debuggers);
+			layerViewer.Init(board, boardController, debuggers, true);
 			gameDebugView.Init(this, boardController);
 			GameManager.Instance.hud.Init(this);
 
