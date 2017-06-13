@@ -5,25 +5,8 @@ using GridGame;
 
 namespace Match3
 {
-	public enum GameState
+	public class Match3Game : AGame
 	{
-		Ready,
-		Running,
-		Ended
-	}
-
-	public class Match3Game : MonoBehaviour
-	{
-		public static Dictionary<GemColor, Color> colorMap = new Dictionary<GemColor, Color>()
-		{
-			{ GemColor.Blue, Color.blue },
-			{ GemColor.Orange, new Color(255, 178, 0) },
-			{ GemColor.None, Color.white },
-			{ GemColor.Pink, new Color(255,192,203) },
-			{ GemColor.Yellow, Color.yellow },
-			{ GemColor.Lila, Color.green },
-		};
-
 		public readonly Vec2 BOARD_SIZE = new Vec2(7, 7);
 
 		public TextAsset levelFile;
@@ -40,7 +23,6 @@ namespace Match3
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
 	
 		//board and layers
-		private Board board;
 		private int fieldsLayerId;
 		private int matchesLayerId;
 		private int candidatesLayerId;
@@ -48,7 +30,6 @@ namespace Match3
 
 		public Level Level { get; set; }
 		public ScoreKeeper ScoreKeeper { get; private set; }
-		public GameState GameState { get; private set; }
 		public int MovesLeft { get { return Level.moves - boardController.Turn; } }
 		public float StartedAt { get; set; }
 		public bool ReplayMode { get { return replayController.Replay != null; } }
@@ -138,7 +119,7 @@ namespace Match3
 			GameManager.Instance.hud.Init(this);
 
 			boardController.Start();
-			GameState = GameState.Running;
+			GameState = GameStates.Running;
 			StartedAt = Time.time;
 
 			Debug.Log("match-3 game started! board state: " + boardController.State);
@@ -147,7 +128,7 @@ namespace Match3
 		public void EndGame(bool success)
 		{
 			boardController.Stop();
-			GameState = GameState.Ended;
+			GameState = GameStates.Ended;
 
 			replayController.SaveReplay();
 
@@ -176,7 +157,7 @@ namespace Match3
 
 		public void HandleManualTick()
 		{
-			if (tickStepped && GameState == GameState.Running)
+			if (tickStepped && GameState == GameStates.Running)
 			{
 				if (boardController.State == ControllerState.Working && !boardView.animationController.Playing)
 				{
@@ -255,14 +236,6 @@ namespace Match3
 			boardController.AddPhase(trickler, board.GetLayer<TrickleState>(trickeLayerId));
 			boardController.AddPhase(candidateProcessor, board.GetLayer<int>(candidatesLayerId));
 			boardController.AddPhase(shuffler, null);
-
-			// boardController.Phases.Add(moveProcessor);
-			// boardController.Phases.Add(matchProcessor);
-			// boardController.Phases.Add(badMoveProcessor);
-			// boardController.Phases.Add(resolver);
-			// boardController.Phases.Add(trickler);
-			// boardController.Phases.Add(candidateProcessor);
-			// boardController.Phases.Add(shuffler);
 		}
 
 		private void OnInputHandled()

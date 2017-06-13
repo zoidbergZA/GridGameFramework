@@ -34,7 +34,7 @@ namespace Match3
 			if (!Initialized)
 				return;
 
-			if (game.GameState == GameState.Running)
+			if (game.GameState == GameStates.Running)
 			{
 				scoreText.text = game.ScoreKeeper.Score.ToString();			
 				UpdateScoreBar();

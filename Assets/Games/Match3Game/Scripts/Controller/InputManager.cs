@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-		if (game.GameState != GameState.Running)
+		if (game.GameState != GameStates.Running)
 			return;
 
 		for (int i = 0; i < eventData.hovered.Count; i++)
@@ -36,7 +36,7 @@ public class InputManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnDrag(PointerEventData eventData)
     {        
-		if (game.GameState != GameState.Running)
+		if (game.GameState != GameStates.Running)
 			return;
 
 		var delta = eventData.position - startPos;
