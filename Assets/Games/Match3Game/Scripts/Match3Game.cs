@@ -12,7 +12,6 @@ namespace Match3
 		public TextAsset levelFile;
 		public TextAsset replayFile;
 		
-		public bool alertStepped;
 		public BoardView boardView;
 		public M3GameView match3GameView;
 				
@@ -20,7 +19,7 @@ namespace Match3
 		private ReplayController replayController;
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
 	
-		//board and layers
+		//board layers
 		private int fieldsLayerId;
 		private int matchesLayerId;
 		private int candidatesLayerId;
@@ -69,12 +68,12 @@ namespace Match3
 
 			//create board and layers
 			var board = new Board(BOARD_SIZE);
-			var debuggers = new LayerDebuggers();
+			var m3Debuggers = new M3Debuggers();
 
-			var fieldsLayer = new BoardLayer<Field>("Fields", BOARD_SIZE, debuggers.FieldsDebugger);
-			var matchesLayer = new BoardLayer<int>("Matches", BOARD_SIZE, debuggers.MatchesDebugger);
-			var candidatesLayer = new BoardLayer<int>("Candidates", BOARD_SIZE, debuggers.CandidatesDebugger);
-			var trickleLayer = new BoardLayer<TrickleState>("Trickle", BOARD_SIZE, debuggers.TrickleDebugger);
+			var fieldsLayer = new BoardLayer<Field>("Fields", BOARD_SIZE, m3Debuggers.FieldsDebugger);
+			var matchesLayer = new BoardLayer<int>("Matches", BOARD_SIZE, m3Debuggers.MatchesDebugger);
+			var candidatesLayer = new BoardLayer<int>("Candidates", BOARD_SIZE, m3Debuggers.CandidatesDebugger);
+			var trickleLayer = new BoardLayer<TrickleState>("Trickle", BOARD_SIZE, m3Debuggers.TrickleDebugger);
 
 			fieldsLayerId = board.AddLayer(fieldsLayer);
 			matchesLayerId = board.AddLayer(matchesLayer);
@@ -95,8 +94,6 @@ namespace Match3
 
 			if (startInDebug)
 			{
-				layerViewer.Init(board, debuggers, true);
-				gameDebugView.Init(this);
 				match3GameView.Init(this);
 			}
 			else
@@ -106,7 +103,7 @@ namespace Match3
 			
 			GameManager.Instance.hud.Init(this);
 
-			StartGame(board, controller);
+			StartGame(board, controller, m3Debuggers);
 			StartedAt = Time.time;
 
 			Debug.Log("match-3 game started! board state: " + Game.BoardController.State);
@@ -124,7 +121,7 @@ namespace Match3
 			ScoreKeeper.ScoreChanged -= OnScoreChanged;
 		}
 
-		public void HandleInput(SwapInput swapInput)
+		public override void HandleInput(SwapInput swapInput)
 		{
 			if (!IsValidInput(swapInput))
 				return;

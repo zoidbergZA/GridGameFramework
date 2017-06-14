@@ -15,6 +15,7 @@ public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 	public bool TickStepped { get; set; }
 	public GameStates GameState { get { return Game.GameState; } }
 
+	public abstract void HandleInput(TInput input);
 	public abstract void HandleManualTick();
 	protected abstract void OnInputHandled();
 	protected abstract void OnPhaseEnded(int phase, string phaseName);
@@ -43,11 +44,17 @@ public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 		return Game.BoardController.Phases[Game.BoardController.CurrentPhase];
 	}
 
-	protected virtual void StartGame(Board board, BoardController<TInput> controller)
+	protected virtual void StartGame(Board board, BoardController<TInput> controller, IDebugColorizer layerColorizer = null)
 	{
 		DebugMode = startInDebug;
 		Game = new Game<TInput>(board, controller);
 		Game.Start();
+
+		if (DebugMode)
+		{
+			layerViewer.Init(board, layerColorizer, true);
+			gameDebugView.Init(this);
+		}
 
 		gameDebugView.gameObject.SetActive(DebugMode);
 		layerViewer.gameObject.SetActive(DebugMode);

@@ -28,7 +28,7 @@ public class LayerViewer : MonoBehaviour
 		private set { enabledToggle.isOn = value; }
 	}
 
-	public void Init(Board board, IDebugColorizer colorizer, bool startOn)
+	public void Init(Board board, IDebugColorizer colorizer = null, bool startOn = true)
 	{
 		this.board = board;
 		this.colorizer = colorizer;
@@ -77,8 +77,8 @@ public class LayerViewer : MonoBehaviour
 
 	public void OnOpacitySliderChange(float newValue)
 	{
-		if (Time.time < opacityChangedAt + 0.1f)
-			return;
+		// if (Time.time < opacityChangedAt + 0.1f)
+		// 	return;
 
 		opacity = opacitySlider.value;
 		opacityChangedAt = Time.time;
@@ -113,7 +113,7 @@ public class LayerViewer : MonoBehaviour
 			{
 				for (int y = 0; y < debugInfo.GetLength(1); y++)
 				{
-					var color = colorizer.GetColor(debugInfo[x, y]);
+					var color = colorizer != null ? colorizer.GetColor(debugInfo[x, y]) : Color.clear;
 
 					cellViews[x, y].Refresh(color, debugInfo[x, y], opacity);
 				}

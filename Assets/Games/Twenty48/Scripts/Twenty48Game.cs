@@ -5,27 +5,23 @@ using GridGame;
 
 namespace Twenty48
 {
-	public class Twenty48Game : MonoBehaviour 
+	public class Twenty48Game : AGame<MoveDirection> 
 	{
-		public int width = 4;
-		public int height = 4;
+		public readonly Vec2 BOARD_SIZE = new Vec2(4, 4);
 
-		public bool tickStepped;
 		public BoardView boardView;
 
-		private Board board;
+		//layers
 		private int tilesLayerId;
 		private int gravityLayerId;
 
-		private BoardController<MoveDirection> boardController;
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
 
-		public void HandleInput(MoveDirection moveDirection)
+		public override void HandleInput(MoveDirection moveDirection)
 		{
-			var inputResult = boardController.HandleInput(moveDirection);
-			Debug.Log("input handled! valid input? " + inputResult + ", board state: " + boardController.State);
+			var inputResult = Game.BoardController.HandleInput(moveDirection);
 		
-			if (inputResult && !tickStepped)
+			if (inputResult && !TickStepped)
 			{
 				StartCoroutine(HandleTickLoop());
 			}
@@ -47,48 +43,38 @@ namespace Twenty48
 		private void StartGame()
 		{
 			//create board and layers
-			Vec2 boardSize = new Vec2(width, height);
-			board = new Board(boardSize);
-			tilesLayerId = board.AddLayer(new BoardLayer<int>("Tiles", boardSize));
-			gravityLayerId = board.AddLayer(new BoardLayer<int>("Gravity", boardSize));
+			var board = new Board(BOARD_SIZE);
+			var layerDebugger = new LayerDebugger();
 
-			InitControllers();
-			boardView.Init(boardSize);
+			tilesLayerId = board.AddLayer(new BoardLayer<int>("Tiles", BOARD_SIZE, layerDebugger.TilesDebugger));
+			gravityLayerId = board.AddLayer(new BoardLayer<int>("Gravity", BOARD_SIZE));
+
+			var controller = InitController(board);
+
+			boardView.Init(BOARD_SIZE);
 
 			//init random starting tile
-			var pos = new Vec2(Random.Range(0, boardSize.x), Random.Range(0, boardSize.y));
+			var pos = new Vec2(Random.Range(0, BOARD_SIZE.x), Random.Range(0, BOARD_SIZE.y));
 			board.GetLayer<int>(tilesLayerId).cells[pos.x, pos.y] = 1;
 			boardView.CreateTileView(pos);
 
-			//register boardController event listeners
-			boardController.TurnEnded += OnTurnEnded;
-			boardController.PhaseEnded += OnPhaseEnded;
-			boardController.InputHandled += OnInputHandled;
-
-			boardController.Start();
+			StartGame(board, controller, layerDebugger);
 		}
 
-		private void EndGame()
-		{
-			//unregister boardController event listeners
-			boardController.TurnEnded -= OnTurnEnded;
-			boardController.PhaseEnded -= OnPhaseEnded;
-			boardController.InputHandled -= OnInputHandled;
-		}
-
-		private void InitControllers()
+		private BoardController<MoveDirection> InitController(Board board)
 		{
 			//init board controller
-			boardController = new BoardController<MoveDirection>();
+			var boardController = new BoardController<MoveDirection>();
 		
 			//add controller phases
-			boardController.Phases.Add(new MoveProcessor());
-			boardController.Phases.Add(new GravityProcessor());
+			boardController.AddPhase(new GravityProcessor(boardController), board.GetLayer<int>(gravityLayerId));
+
+			return boardController;
 		}
 
 		private IEnumerator HandleTickLoop()
 		{
-			while (boardController.State == ControllerState.Working)
+			while (Game.BoardController.State == ControllerState.Working)
 			{
 				HandleTick();
 
@@ -105,39 +91,36 @@ namespace Twenty48
 			}
 		}
 
-		public void HandleManualTick()
+		public override void HandleManualTick()
 		{
-			if (tickStepped)
+			if (TickStepped)
 			{
-				if (boardController.State == ControllerState.Working)
+				if (Game.BoardController.State == ControllerState.Working)
 				{
 					HandleTick();
 					// boardView.animationController.PlayAnimations();
-					// debugView.RefreshBoardAlerts(lastTickAlerts);
-					
-					// PrintTickResults(lastTickAlerts);
 				}
 			}
 		}
 
 		private void HandleTick()
 		{
-			lastTickAlerts = boardController.Tick();
+			lastTickAlerts = Game.BoardController.Tick();
 		}
 
-		private void OnInputHandled()
-		{
-			Debug.Log("input handled event!");
-		}
+        protected override void OnInputHandled()
+        {
+            // throw new NotImplementedException();
+        }
 
-		private void OnTurnEnded(bool cancelled)
-		{
-			Debug.Log("====>> Turn ended. cancelled? " + cancelled);
-		}
+        protected override void OnPhaseEnded(int phase, string phaseName)
+        {
+            // throw new NotImplementedException();
+        }
 
-		private void OnPhaseEnded(int phase, string phaseName)
-		{
-			Debug.Log("Phase [" + phase +  "] " + phaseName + " ended");
-		}
-	}
+        protected override void OnTurnEnded(bool cancelled)
+        {
+            // throw new NotImplementedException();
+        }
+    }
 }

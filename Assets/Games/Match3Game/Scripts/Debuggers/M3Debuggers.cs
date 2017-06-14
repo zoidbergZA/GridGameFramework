@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Match3
 {
-	public class LayerDebuggers : IDebugColorizer
+	public class M3Debuggers : IDebugColorizer
 	{
 		public Func<Field, string> FieldsDebugger = (field) => 
 		{
