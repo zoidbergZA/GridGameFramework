@@ -14,8 +14,6 @@ namespace Match3
 		
 		public bool alertStepped;
 		public BoardView boardView;
-		public LayerViewer layerViewer;
-		public GameDebugView gameDebugView;
 		public M3GameView match3GameView;
 				
 		private LevelLoader levelLoader = new LevelLoader();
@@ -94,7 +92,7 @@ namespace Match3
 
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
-			layerViewer.Init(board, controller, debuggers, true);
+			layerViewer.Init(board, debuggers, true);
 			gameDebugView.Init(this);
 			match3GameView.Init(this);
 			GameManager.Instance.hud.Init(this);

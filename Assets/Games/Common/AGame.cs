@@ -19,6 +19,9 @@ public interface IGenericGame
 
 public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 {
+	public LayerViewer layerViewer;
+	public GameDebugView gameDebugView;
+
 	public Game<TInput> Game { get; private set; }
 	public bool DebugMode { get; protected set; }
 	public bool TickStepped { get; set; }
@@ -60,15 +63,21 @@ public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 		controller.TurnEnded += OnTurnEnded;
 		controller.PhaseEnded += OnPhaseEnded;
 		controller.InputHandled += OnInputHandled;
+		controller.DebugEvent += OnDebugEvent;
 	}
 
 	protected virtual void EndGame()
 	{
 		Game.End();
 		
-	
 		Game.BoardController.TurnEnded -= OnTurnEnded;
 		Game.BoardController.PhaseEnded -= OnPhaseEnded;
 		Game.BoardController.InputHandled -= OnInputHandled;
+		Game.BoardController.DebugEvent -= OnDebugEvent;
+	}
+
+	private void OnDebugEvent(IGenericLayer layer)
+	{
+		layerViewer.SelectLayer(layer, true);
 	}
 }
