@@ -4,19 +4,6 @@ using UnityEngine;
 using GridGame;
 using System;
 
-public interface IGenericGame
-{
-	bool DebugMode { get; }
-	bool TickStepped { get; set; }
-	GameStates GameState { get; }
-
-	int GetTurn();
-	int GetTicks();
-	ControllerState GetControllerState();
-	ControllerPhase GetCurrentPhase();
-	void HandleManualTick();
-}
-
 public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 {
 	public LayerViewer layerViewer;
@@ -55,10 +42,12 @@ public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 		return Game.BoardController.Phases[Game.BoardController.CurrentPhase];
 	}
 
-	protected virtual void StartGame(Board board, BoardController<TInput> controller)
+	protected virtual void StartGame(Board board, BoardController<TInput> controller, bool debugMode)
 	{
 		Game = new Game<TInput>(board, controller);
 		Game.Start();
+
+		//TODO: debug mode setups
 
 		controller.TurnEnded += OnTurnEnded;
 		controller.PhaseEnded += OnPhaseEnded;

@@ -57,7 +57,7 @@ namespace GridGame
             CurrentPhase = -2;
         }
 
-        public void AddPhase(ControllerPhase phase, IGenericLayer debugLayer)
+        public void AddPhase(ControllerPhase phase, IGenericLayer debugLayer = null)
         {
             Phases.Add(phase);
             phaseLayerMap.Add(phase, debugLayer);
