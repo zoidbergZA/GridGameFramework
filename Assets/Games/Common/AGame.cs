@@ -44,10 +44,12 @@ public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 
 	protected virtual void StartGame(Board board, BoardController<TInput> controller, bool debugMode)
 	{
+		DebugMode = debugMode;
 		Game = new Game<TInput>(board, controller);
 		Game.Start();
 
-		//TODO: debug mode setups
+		gameDebugView.gameObject.SetActive(debugMode);
+		layerViewer.gameObject.SetActive(debugMode);
 
 		controller.TurnEnded += OnTurnEnded;
 		controller.PhaseEnded += OnPhaseEnded;
@@ -67,6 +69,9 @@ public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 
 	private void OnDebugEvent(IGenericLayer layer)
 	{
+		if (!DebugMode)
+			return;
+
 		layerViewer.SelectLayer(layer, true);
 	}
 }

@@ -93,9 +93,18 @@ namespace Match3
 
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
-			layerViewer.Init(board, debuggers, true);
-			gameDebugView.Init(this);
-			match3GameView.Init(this);
+
+			if (debugMode)
+			{
+				layerViewer.Init(board, debuggers, true);
+				gameDebugView.Init(this);
+				match3GameView.Init(this);
+			}
+			else
+			{
+				Destroy(match3GameView.gameObject);
+			}
+			
 			GameManager.Instance.hud.Init(this);
 
 			StartGame(board, controller, debugMode);
