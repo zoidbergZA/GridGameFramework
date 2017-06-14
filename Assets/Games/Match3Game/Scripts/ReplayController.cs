@@ -10,19 +10,19 @@ namespace Match3
 	{
 		public Replay Replay { get; private set; }
 
-		private Match3Game game;
+		private Match3Game m3;
 		private int replayInputIndex;
 
 		public ReplayController(Match3Game game)
 		{
-			this.game = game;
+			this.m3 = game;
 		}
 
 		public void LoadReplay(TextAsset replayFile)
 		{
 			Replay = JsonUtility.FromJson<Replay>(replayFile.ToString());
 
-			game.Level = Replay.Level;
+			m3.Level = Replay.Level;
 			replayInputIndex = 0;
 		}
 
@@ -33,19 +33,19 @@ namespace Match3
 
 			var nextInput = Replay.InputHistory[replayInputIndex];
 
-			if (!game.IsValidInput(nextInput))
+			if (!m3.IsValidInput(nextInput))
 				return;
 		
-			game.HandleInput(nextInput);
+			m3.HandleInput(nextInput);
 			replayInputIndex++;
 		}
 
 		public void SaveReplay()
 		{
 			var replay = new Replay();
-			replay.RandomState = game.InitialRandomState;
-			replay.InputHistory = game.BoardController.InputHistory.ToArray();
-			replay.Level = game.Level;
+			replay.RandomState = m3.InitialRandomState;
+			replay.InputHistory = m3.Game.BoardController.InputHistory.ToArray();
+			replay.Level = m3.Level;
 			var json = JsonUtility.ToJson(replay, true);
 			SaveJsonFile("TestReplay.json", json);
 		}

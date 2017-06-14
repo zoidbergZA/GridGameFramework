@@ -29,7 +29,7 @@ namespace Match3
 
 		public Level Level { get; set; }
 		public ScoreKeeper ScoreKeeper { get; private set; }
-		public int MovesLeft { get { return Level.moves - BoardController.Turn; } }
+		public int MovesLeft { get { return Level.moves - Game.BoardController.Turn; } }
 		public float StartedAt { get; set; }
 		public bool ReplayMode { get { return replayController.Replay != null; } }
 		public Random.State InitialRandomState { get; private set; }
@@ -100,7 +100,7 @@ namespace Match3
 			StartGame(board, controller);
 			StartedAt = Time.time;
 
-			Debug.Log("match-3 game started! board state: " + BoardController.State);
+			Debug.Log("match-3 game started! board state: " + Game.BoardController.State);
 		}
 
 		protected void EndGame(bool success)
@@ -120,8 +120,8 @@ namespace Match3
 			if (!IsValidInput(swapInput))
 				return;
 
-			var inputResult = BoardController.HandleInput(swapInput);
-			Debug.Log("input handled! valid input? " + inputResult + ", board state: " + BoardController.State);
+			var inputResult = Game.BoardController.HandleInput(swapInput);
+			Debug.Log("input handled! valid input? " + inputResult + ", board state: " + Game.BoardController.State);
 		
 			if (inputResult && !tickStepped)
 			{
@@ -131,9 +131,9 @@ namespace Match3
 
 		public void HandleManualTick()
 		{
-			if (tickStepped && GameState == GameStates.Running)
+			if (tickStepped && Game.GameState == GameStates.Running)
 			{
-				if (BoardController.State == ControllerState.Working && !boardView.animationController.Playing)
+				if (Game.BoardController.State == ControllerState.Working && !boardView.animationController.Playing)
 				{
 					HandleTick();
 					boardView.animationController.PlayAnimations();
@@ -146,9 +146,9 @@ namespace Match3
 
 		public bool IsValidInput(SwapInput input)
 		{
-			var fieldsLayer = Board.GetLayer<Field>(fieldsLayerId);
+			var fieldsLayer = Game.Board.GetLayer<Field>(fieldsLayerId);
 
-			if (BoardController.State != ControllerState.ReadyForInput || boardView.animationController.Playing)
+			if (Game.BoardController.State != ControllerState.ReadyForInput || boardView.animationController.Playing)
 				return false;
 			if (!input.from.IsValidPosition(fieldsLayer) || !input.to.IsValidPosition(fieldsLayer))
 				return false;
@@ -168,7 +168,7 @@ namespace Match3
 
 		private IEnumerator HandleTickLoop()
 		{
-			while (BoardController.State == ControllerState.Working)
+			while (Game.BoardController.State == ControllerState.Working)
 			{
 				HandleTick();
 				float animationTime = boardView.animationController.PlayAnimations();
@@ -184,7 +184,7 @@ namespace Match3
 
 		private void HandleTick()
 		{
-			lastTickAlerts = BoardController.Tick();
+			lastTickAlerts = Game.BoardController.Tick();
 		}
 
 		private BoardController<SwapInput> InitController(Board board, ScoreKeeper scoreKeeper)

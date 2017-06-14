@@ -13,14 +13,14 @@ namespace Match3
 		public RectTransform scoreBar;
 		public GameOverView gameOverView;
 
-		private Match3Game game;
+		private Match3Game m3;
 		private float scoreBarMax;
 
 		public bool Initialized { get; private set; }
 
 		public void Init(Match3Game game)
 		{
-			this.game = game;
+			this.m3 = game;
 
 			scoreText.text = "0";
 			scoreBarMax = scoreBar.sizeDelta.y;
@@ -34,9 +34,9 @@ namespace Match3
 			if (!Initialized)
 				return;
 
-			if (game.GameState == GameStates.Running)
+			if (m3.Game.GameState == GameStates.Running)
 			{
-				scoreText.text = game.ScoreKeeper.Score.ToString();			
+				scoreText.text = m3.ScoreKeeper.Score.ToString();			
 				UpdateScoreBar();
 				UpdateMovesText();
 			}
@@ -44,13 +44,13 @@ namespace Match3
 
 		private void UpdateScoreBar()
 		{
-			float frac = game.ScoreKeeper.Score / (float)game.ScoreKeeper.TargetScore * scoreBarMax;
+			float frac = m3.ScoreKeeper.Score / (float)m3.ScoreKeeper.TargetScore * scoreBarMax;
 			scoreBar.sizeDelta = new Vector2(scoreBar.sizeDelta.x, frac);
 		}
 
 		private void UpdateMovesText()
 		{
-			movesText.text = game.MovesLeft.ToString();
+			movesText.text = m3.MovesLeft.ToString();
 		}
 	}
 }

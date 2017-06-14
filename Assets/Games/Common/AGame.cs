@@ -3,26 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using GridGame;
 
-public enum GameStates { Ready, Running, Ended }
+
 
 public abstract class AGame<TInput> : MonoBehaviour 
 {
+	public Game<TInput> Game { get; private set; }
 	public bool DebugMode { get; protected set; }
-	public GameStates GameState { get; private set; }
-	protected Board Board { get; private set; }
-	public BoardController<TInput> BoardController { get; private set; }
-
+	
 	protected abstract void OnInputHandled();
 	protected abstract void OnPhaseEnded(int phase, string phaseName);
 	protected abstract void OnTurnEnded(bool cancelled);
 
 	protected virtual void StartGame(Board board, BoardController<TInput> controller)
 	{
-		Board = board;
-		BoardController = controller;
-
-		BoardController.Start();
-		GameState = GameStates.Running;
+		Game = new Game<TInput>(board, controller);
+		Game.Start();
 
 		controller.TurnEnded += OnTurnEnded;
 		controller.PhaseEnded += OnPhaseEnded;
@@ -31,11 +26,11 @@ public abstract class AGame<TInput> : MonoBehaviour
 
 	protected virtual void EndGame()
 	{
-		BoardController.Stop();
-		GameState = GameStates.Ended;
+		Game.End();
+		
 	
-		BoardController.TurnEnded -= OnTurnEnded;
-		BoardController.PhaseEnded -= OnPhaseEnded;
-		BoardController.InputHandled -= OnInputHandled;
+		Game.BoardController.TurnEnded -= OnTurnEnded;
+		Game.BoardController.PhaseEnded -= OnPhaseEnded;
+		Game.BoardController.InputHandled -= OnInputHandled;
 	}
 }

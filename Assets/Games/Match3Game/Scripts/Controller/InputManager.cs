@@ -8,7 +8,7 @@ using System;
 
 public class InputManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-	public Match3Game game;
+	public Match3Game m3;
 	public float dragDistance = 5f;
 
 	private FieldView selectedFieldView;
@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-		if (game.GameState != GameStates.Running)
+		if (m3.Game.GameState != GameStates.Running)
 			return;
 
 		for (int i = 0; i < eventData.hovered.Count; i++)
@@ -36,7 +36,7 @@ public class InputManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnDrag(PointerEventData eventData)
     {        
-		if (game.GameState != GameStates.Running)
+		if (m3.Game.GameState != GameStates.Running)
 			return;
 
 		var delta = eventData.position - startPos;
@@ -92,6 +92,6 @@ public class InputManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 		swapInput.from = selectedFieldView.Field.position;
 		swapInput.to = swapInput.from + swapDirection;
 
-		game.HandleInput(swapInput);
+		m3.HandleInput(swapInput);
 	}
 }
