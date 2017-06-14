@@ -6,6 +6,7 @@ using System;
 
 public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 {
+	public bool startInDebug;
 	public LayerViewer layerViewer;
 	public GameDebugView gameDebugView;
 
@@ -42,14 +43,14 @@ public abstract class AGame<TInput> : MonoBehaviour, IGenericGame
 		return Game.BoardController.Phases[Game.BoardController.CurrentPhase];
 	}
 
-	protected virtual void StartGame(Board board, BoardController<TInput> controller, bool debugMode)
+	protected virtual void StartGame(Board board, BoardController<TInput> controller)
 	{
-		DebugMode = debugMode;
+		DebugMode = startInDebug;
 		Game = new Game<TInput>(board, controller);
 		Game.Start();
 
-		gameDebugView.gameObject.SetActive(debugMode);
-		layerViewer.gameObject.SetActive(debugMode);
+		gameDebugView.gameObject.SetActive(DebugMode);
+		layerViewer.gameObject.SetActive(DebugMode);
 
 		controller.TurnEnded += OnTurnEnded;
 		controller.PhaseEnded += OnPhaseEnded;

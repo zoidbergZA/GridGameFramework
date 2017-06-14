@@ -9,7 +9,6 @@ namespace Match3
 	{
 		public readonly Vec2 BOARD_SIZE = new Vec2(7, 7);
 
-		public bool debugMode;
 		public TextAsset levelFile;
 		public TextAsset replayFile;
 		
@@ -94,7 +93,7 @@ namespace Match3
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
 
-			if (debugMode)
+			if (startInDebug)
 			{
 				layerViewer.Init(board, debuggers, true);
 				gameDebugView.Init(this);
@@ -107,7 +106,7 @@ namespace Match3
 			
 			GameManager.Instance.hud.Init(this);
 
-			StartGame(board, controller, debugMode);
+			StartGame(board, controller);
 			StartedAt = Time.time;
 
 			Debug.Log("match-3 game started! board state: " + Game.BoardController.State);
