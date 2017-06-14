@@ -63,7 +63,7 @@ namespace Twenty48
 			//register boardController event listeners
 			boardController.TurnEnded += OnTurnEnded;
 			boardController.PhaseEnded += OnPhaseEnded;
-			boardController.ValidInputHandled += OnInputHandled;
+			boardController.InputHandled += OnInputHandled;
 
 			boardController.Start();
 		}
@@ -73,7 +73,7 @@ namespace Twenty48
 			//unregister boardController event listeners
 			boardController.TurnEnded -= OnTurnEnded;
 			boardController.PhaseEnded -= OnPhaseEnded;
-			boardController.ValidInputHandled -= OnInputHandled;
+			boardController.InputHandled -= OnInputHandled;
 		}
 
 		private void InitControllers()

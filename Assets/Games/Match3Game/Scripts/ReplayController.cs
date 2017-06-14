@@ -44,7 +44,7 @@ namespace Match3
 		{
 			var replay = new Replay();
 			replay.RandomState = game.InitialRandomState;
-			replay.InputHistory = game.boardController.InputHistory.ToArray();
+			replay.InputHistory = game.BoardController.InputHistory.ToArray();
 			replay.Level = game.Level;
 			var json = JsonUtility.ToJson(replay, true);
 			SaveJsonFile("TestReplay.json", json);

@@ -5,7 +5,7 @@ using GridGame;
 
 namespace Match3
 {
-	public class Match3Game : AGame
+	public class Match3Game : AGame<SwapInput>
 	{
 		public readonly Vec2 BOARD_SIZE = new Vec2(7, 7);
 
@@ -16,8 +16,7 @@ namespace Match3
 		public BoardView boardView;
 		public LayerViewer layerViewer;
 		public GameDebugView gameDebugView;
-		public BoardController<SwapInput> boardController;
-		
+				
 		private LevelLoader levelLoader = new LevelLoader();
 		private ReplayController replayController;
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
@@ -30,7 +29,7 @@ namespace Match3
 
 		public Level Level { get; set; }
 		public ScoreKeeper ScoreKeeper { get; private set; }
-		public int MovesLeft { get { return Level.moves - boardController.Turn; } }
+		public int MovesLeft { get { return Level.moves - BoardController.Turn; } }
 		public float StartedAt { get; set; }
 		public bool ReplayMode { get { return replayController.Replay != null; } }
 		public Random.State InitialRandomState { get; private set; }
@@ -51,27 +50,9 @@ namespace Match3
 			{
 				replayController.HandleReplayInput();
 			}
-
-			if (Input.GetKeyDown(KeyCode.S))
-			{
-				if (lastTickAlerts.Length > 0)
-				{
-					if (alertStepped)
-					{
-						// debugView.ShowNextAlert();
-					}
-					else
-					{
-						// while (debugView.AlertIndex < lastTickAlerts.Length)
-						// {
-						// 	debugView.ShowNextAlert();
-						// }
-					}
-				}
-			}
 		}
 
-		public void StartGame()
+		private void StartGame()
 		{
 			replayController = new ReplayController(this);
 
@@ -88,7 +69,7 @@ namespace Match3
 			}
 
 			//create board and layers
-			board = new Board(BOARD_SIZE);
+			var board = new Board(BOARD_SIZE);
 			var debuggers = new LayerDebuggers();
 
 			var fieldsLayer = new BoardLayer<Field>("Fields", BOARD_SIZE, debuggers.FieldsDebugger);
@@ -103,41 +84,34 @@ namespace Match3
 
 			ScoreKeeper = new ScoreKeeper(Level);
 			
-			InitControllers(ScoreKeeper);
+			var controller = InitController(board, ScoreKeeper);
+
 			levelLoader.LoadLevel(Level, fieldsLayer);
 
-			//register boardController event listeners
-			boardController.TurnEnded += OnTurnEnded;
-			boardController.PhaseEnded += OnPhaseEnded;
-			boardController.ValidInputHandled += OnInputHandled;
+			//register event listeners
 			ScoreKeeper.ScoreChanged += OnScoreChanged;
 
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
-			layerViewer.Init(board, boardController, debuggers, true);
-			gameDebugView.Init(this, boardController);
+			layerViewer.Init(board, controller, debuggers, true);
+			gameDebugView.Init(this, controller);
 			GameManager.Instance.hud.Init(this);
 
-			boardController.Start();
-			GameState = GameStates.Running;
+			StartGame(board, controller);
 			StartedAt = Time.time;
 
-			Debug.Log("match-3 game started! board state: " + boardController.State);
+			Debug.Log("match-3 game started! board state: " + BoardController.State);
 		}
 
-		public void EndGame(bool success)
+		protected void EndGame(bool success)
 		{
-			boardController.Stop();
-			GameState = GameStates.Ended;
+			EndGame();
 
 			replayController.SaveReplay();
 
 			GameManager.Instance.hud.gameOverView.Show(success);
 
-			//unregister boardController event listeners
-			boardController.TurnEnded -= OnTurnEnded;
-			boardController.PhaseEnded -= OnPhaseEnded;
-			boardController.ValidInputHandled -= OnInputHandled;
+			//unregister event listeners
 			ScoreKeeper.ScoreChanged -= OnScoreChanged;
 		}
 
@@ -146,8 +120,8 @@ namespace Match3
 			if (!IsValidInput(swapInput))
 				return;
 
-			var inputResult = boardController.HandleInput(swapInput);
-			Debug.Log("input handled! valid input? " + inputResult + ", board state: " + boardController.State);
+			var inputResult = BoardController.HandleInput(swapInput);
+			Debug.Log("input handled! valid input? " + inputResult + ", board state: " + BoardController.State);
 		
 			if (inputResult && !tickStepped)
 			{
@@ -159,7 +133,7 @@ namespace Match3
 		{
 			if (tickStepped && GameState == GameStates.Running)
 			{
-				if (boardController.State == ControllerState.Working && !boardView.animationController.Playing)
+				if (BoardController.State == ControllerState.Working && !boardView.animationController.Playing)
 				{
 					HandleTick();
 					boardView.animationController.PlayAnimations();
@@ -172,9 +146,9 @@ namespace Match3
 
 		public bool IsValidInput(SwapInput input)
 		{
-			var fieldsLayer = board.GetLayer<Field>(fieldsLayerId);
+			var fieldsLayer = Board.GetLayer<Field>(fieldsLayerId);
 
-			if (boardController.State != ControllerState.ReadyForInput || boardView.animationController.Playing)
+			if (BoardController.State != ControllerState.ReadyForInput || boardView.animationController.Playing)
 				return false;
 			if (!input.from.IsValidPosition(fieldsLayer) || !input.to.IsValidPosition(fieldsLayer))
 				return false;
@@ -194,7 +168,7 @@ namespace Match3
 
 		private IEnumerator HandleTickLoop()
 		{
-			while (boardController.State == ControllerState.Working)
+			while (BoardController.State == ControllerState.Working)
 			{
 				HandleTick();
 				float animationTime = boardView.animationController.PlayAnimations();
@@ -210,13 +184,13 @@ namespace Match3
 
 		private void HandleTick()
 		{
-			lastTickAlerts = boardController.Tick();
+			lastTickAlerts = BoardController.Tick();
 		}
 
-		private void InitControllers(ScoreKeeper scoreKeeper)
+		private BoardController<SwapInput> InitController(Board board, ScoreKeeper scoreKeeper)
 		{
 			//create board controller
-			boardController = new BoardController<SwapInput>();
+			var boardController = new BoardController<SwapInput>();
 
 			//add processor phases
 			var moveProcessor = new MoveProcessor(board, fieldsLayerId, boardController, boardView.animationController);
@@ -236,14 +210,16 @@ namespace Match3
 			boardController.AddPhase(trickler, board.GetLayer<TrickleState>(trickeLayerId));
 			boardController.AddPhase(candidateProcessor, board.GetLayer<int>(candidatesLayerId));
 			boardController.AddPhase(shuffler, null);
+
+			return boardController;
 		}
 
-		private void OnInputHandled()
+		protected override void OnInputHandled()
 		{
 			Debug.Log("input handled event!");
 		}
 
-		private void OnTurnEnded(bool cancelled)
+		protected override void OnTurnEnded(bool cancelled)
 		{
 			Debug.Log("====>> Turn ended. cancelled? " + cancelled);
 
@@ -260,7 +236,7 @@ namespace Match3
 			}
 		}
 
-		private void OnPhaseEnded(int phase, string phaseName)
+		protected override void OnPhaseEnded(int phase, string phaseName)
 		{
 			Debug.Log("Phase [" + phase +  "] " + phaseName + " ended");
 		}

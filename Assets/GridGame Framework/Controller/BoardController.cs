@@ -9,7 +9,7 @@ public class BoardController<TInput>
     public delegate void PhaseEvt(int phase, string phaseName);
     public delegate void DebugEvt(IGenericLayer layer);
 
-    public event Evt ValidInputHandled;
+    public event Evt InputHandled;
     public event TurnEvt TurnEnded;
     public event PhaseEvt PhaseEnded;
     public event DebugEvt DebugEvent;
@@ -73,9 +73,9 @@ public class BoardController<TInput>
         LastInput = input;
         InputHistory.Add(input);
 
-        if (ValidInputHandled != null)
+        if (InputHandled != null)
         {
-            ValidInputHandled();
+            InputHandled();
         }
 
         StartNextPhase();

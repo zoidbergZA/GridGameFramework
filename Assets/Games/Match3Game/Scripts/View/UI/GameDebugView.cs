@@ -34,7 +34,7 @@ namespace Match3
 				return;
 
 			gameStateText.text = "GameState: " + game.GameState.ToString();
-			turnText.text = "Turns: " + game.boardController.Turn;
+			turnText.text = "Turns: " + game.BoardController.Turn;
 			tickText.text = "Ticks: " + controller.Ticks;
 			movesLeftText.text = "Moves Left: " + game.MovesLeft;
 
