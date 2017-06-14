@@ -5,14 +5,18 @@ using GridGame;
 
 namespace Twenty48
 {
+    public enum GravityState { Open, Ready, Fixed }
+
     public class GravityProcessor : ControllerPhase
     {
         private BoardController<MoveDirection> controller;
+        private BoardLayer<GravityState> gravityLayer;
         private int step;
 
-        public GravityProcessor(BoardController<MoveDirection> controller)
+        public GravityProcessor(BoardController<MoveDirection> controller, BoardLayer<GravityState> gravityLayer)
         {
             this.controller = controller;
+            this.gravityLayer = gravityLayer;
         }
 
         public override BoardAlert[] Tick()

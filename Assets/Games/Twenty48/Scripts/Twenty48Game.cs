@@ -47,7 +47,7 @@ namespace Twenty48
 			var layerDebugger = new LayerDebugger();
 
 			tilesLayerId = board.AddLayer(new BoardLayer<int>("Tiles", BOARD_SIZE, layerDebugger.TilesDebugger));
-			gravityLayerId = board.AddLayer(new BoardLayer<int>("Gravity", BOARD_SIZE));
+			gravityLayerId = board.AddLayer(new BoardLayer<GravityState>("Gravity", BOARD_SIZE, layerDebugger.GravityDebugger));
 
 			var controller = InitController(board);
 
@@ -67,7 +67,9 @@ namespace Twenty48
 			var boardController = new BoardController<MoveDirection>();
 		
 			//add controller phases
-			boardController.AddPhase(new GravityProcessor(boardController), board.GetLayer<int>(gravityLayerId));
+			var gravityLayer = board.GetLayer<GravityState>(gravityLayerId);
+
+			boardController.AddPhase(new GravityProcessor(boardController, gravityLayer), gravityLayer);
 
 			return boardController;
 		}

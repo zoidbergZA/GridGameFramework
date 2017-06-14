@@ -13,6 +13,11 @@ namespace Twenty48
 			return cell.ToString();
 		};
 
+		public Func<GravityState, string> GravityDebugger = (cell) => 
+		{
+			return cell.ToString();
+		};
+
         public Color GetColor(string debugState)
         {
             return Color.clear;
