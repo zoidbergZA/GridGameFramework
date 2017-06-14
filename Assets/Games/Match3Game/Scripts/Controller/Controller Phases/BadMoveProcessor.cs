@@ -25,7 +25,6 @@ namespace Match3
 		{
 			var move = controller.LastInput;
 			var matches = matchProcessor.matchGroups.Count;
-			var alerts = new List<BoardAlert>();
 
 			if (matches == 0)
 			{			
@@ -37,17 +36,11 @@ namespace Match3
 				fromField.SetGem(tempGem);
 			
 				moveProcessor.animationController.QueueAnimation(new SwapAnimation(move.from, move.to));
-				alerts.Add(new BoardAlert(move.from, move.to, "no matches, move reversed and cancel turn"));
 				controller.CancelTurn();
-				return alerts.ToArray();
-			}
-			else
-			{
-				alerts.Add(new BoardAlert(move.from, move.to, matches + " matches, continue..."));
 			}
 
 			State = PhaseState.Done;
-			return alerts.ToArray();
+			return null;
 		}
 	}
 }

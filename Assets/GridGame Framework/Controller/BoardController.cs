@@ -105,7 +105,7 @@ public class BoardController<TInput>
         
         //check if tick cancelled the turn
         if (State == ControllerState.ReadyForInput)
-            return new BoardAlert[] { new BoardAlert(Vec2.invalid, Vec2.invalid, "turn cancelled") };
+            return new BoardAlert[] { new BoardAlert(null, "turn cancelled") };
 
         if (phaseLayerMap[Phases[CurrentPhase]] != null)
         {

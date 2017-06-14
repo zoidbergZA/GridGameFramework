@@ -5,14 +5,18 @@ using GridGame;
 [System.Serializable]
 public class BoardAlert
 {
-	public Vec2 from;
-    public Vec2 to;
-    public string context;
-
-    public BoardAlert(Vec2 from, Vec2 to, string context)
+    public struct CellDebug
     {
-        this.from = from;
-        this.to = to;
-        this.context = context;
+        public Vec2 cell;
+        public string info;
+    }
+
+	public CellDebug[] cells;
+    public string message;
+
+    public BoardAlert(CellDebug[] cells, string message)
+    {
+        this.cells = cells;
+        this.message = message;
     }
 }

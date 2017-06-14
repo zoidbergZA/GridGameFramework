@@ -58,8 +58,6 @@ namespace Match3
 				return null;
 			}
 
-			var alerts = new List<BoardAlert>();
-
 			var results = matchers[matcherIndex].FindMatches();
 
 			if (results.Count > 0)
@@ -68,9 +66,7 @@ namespace Match3
 			}
 
 			matcherIndex++;
-
-			alerts.Add(new BoardAlert(Vec2.invalid, Vec2.invalid, "end of matcher tick: " + results.Count + " matches"));
-			return alerts.ToArray();
+			return null;
 		}
 
 		public void FindAllMatches()

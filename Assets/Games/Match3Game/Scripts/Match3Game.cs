@@ -137,7 +137,6 @@ namespace Match3
 				{
 					HandleTick();
 					boardView.animationController.PlayAnimations();
-					// debugView.RefreshBoardAlerts(lastTickAlerts);
 					
 					PrintTickResults(lastTickAlerts);
 				}
@@ -177,8 +176,6 @@ namespace Match3
 				{
 					yield return new WaitForSeconds(animationTime);
 				}
-				
-				// debugView.RefreshBoardAlerts(lastTickAlerts);
 			}
 		}
 
@@ -257,7 +254,7 @@ namespace Match3
 			int counter = 0;
 			foreach (var result in results)
 			{
-				Debug.Log("tick process [" + counter + "]" + " from: " + result.from + ", to: " + result.to + ", context: " + result.context);
+				Debug.Log(result.message);
 				counter++;
 			}
 		}

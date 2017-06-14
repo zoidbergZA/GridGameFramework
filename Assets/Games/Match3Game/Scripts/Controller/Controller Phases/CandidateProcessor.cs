@@ -64,7 +64,7 @@ namespace Match3
 				candidateGroups.AddRange(results);
 			}
 
-			return new BoardAlert[] { new BoardAlert(Vec2.invalid, Vec2.invalid, "end of candidate matcher tick: " + results.Count + " candidates") };
+			return null;
 		}
 	}
 }
