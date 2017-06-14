@@ -11,11 +11,12 @@ namespace Match3
 
 		public TextAsset levelFile;
 		public TextAsset replayFile;
-		public bool tickStepped;
+		
 		public bool alertStepped;
 		public BoardView boardView;
 		public LayerViewer layerViewer;
 		public GameDebugView gameDebugView;
+		public M3GameView match3GameView;
 				
 		private LevelLoader levelLoader = new LevelLoader();
 		private ReplayController replayController;
@@ -94,7 +95,8 @@ namespace Match3
 			//init views and HUD
 			boardView.InitView(fieldsLayer);
 			layerViewer.Init(board, controller, debuggers, true);
-			gameDebugView.Init(this, controller);
+			gameDebugView.Init(this);
+			match3GameView.Init(this);
 			GameManager.Instance.hud.Init(this);
 
 			StartGame(board, controller);
@@ -123,15 +125,15 @@ namespace Match3
 			var inputResult = Game.BoardController.HandleInput(swapInput);
 			Debug.Log("input handled! valid input? " + inputResult + ", board state: " + Game.BoardController.State);
 		
-			if (inputResult && !tickStepped)
+			if (inputResult && !TickStepped)
 			{
 				StartCoroutine(HandleTickLoop());
 			}
 		}
 
-		public void HandleManualTick()
+		public override void HandleManualTick()
 		{
-			if (tickStepped && Game.GameState == GameStates.Running)
+			if (TickStepped && Game.GameState == GameStates.Running)
 			{
 				if (Game.BoardController.State == ControllerState.Working && !boardView.animationController.Playing)
 				{

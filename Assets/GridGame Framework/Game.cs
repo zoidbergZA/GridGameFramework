@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-public enum GameStates { Ready, Running, Ended }
-
 namespace GridGame
 {
+	public enum GameStates { Ready, Running, Ended }
+
 	public class Game<TInput>
 	{
 		public Board Board { get; private set; }

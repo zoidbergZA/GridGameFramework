@@ -37,6 +37,7 @@ namespace Match3
 			
 				moveProcessor.animationController.QueueAnimation(new SwapAnimation(move.from, move.to));
 				controller.CancelTurn();
+				return null;
 			}
 
 			State = PhaseState.Done;
