@@ -11,10 +11,10 @@ namespace Twenty48
 		public BoardView boardView;
 		public float moveDuration = 0.3f;
 
-		private List<MoveAnimation> animQueue = new List<MoveAnimation>();
+		private List<AAnimation> animQueue = new List<AAnimation>();
 		private float animationTime;
 
-		public void QueueAnimation(MoveAnimation anim)
+		public void QueueAnimation(AAnimation anim)
 		{
 			animQueue.Add(anim);
 			animationTime = moveDuration;
@@ -24,7 +24,16 @@ namespace Twenty48
 		{
 			for (int i = 0; i < animQueue.Count; i++)
 			{
-				PlayMoveAnimation(animQueue[i]);
+				if (animQueue[i] is MoveAnimation)
+				{
+					MoveAnimation move = (MoveAnimation)animQueue[i];
+					PlayMoveAnimation(move);
+				}
+				else if (animQueue[i] is MergeAnimation)
+				{
+					MergeAnimation merge = (MergeAnimation)animQueue[i];
+					PlayMergeAnimation(merge);
+				}
 			}
 
 			animQueue.Clear();
@@ -42,9 +51,29 @@ namespace Twenty48
                 .setEaseType(EaseType.Linear)
                 .start();
 		}
+
+		private void PlayMergeAnimation(MergeAnimation anim)
+		{
+			var fromView = boardView.GetTileView(anim.from);
+			var toView = boardView.GetTileView(anim.to);
+
+			fromView.BoardPosition = anim.to;
+			fromView.RectTransform
+                .ZKanchoredPositionTo(boardView.GetBoardPosition(anim.to), moveDuration)
+                .setEaseType(EaseType.Linear)
+                .start();
+
+			fromView.SetRank(anim.rank);
+			boardView.DestroyTileView(toView);
+		}
 	}
 
-	public struct MoveAnimation
+	public abstract class AAnimation
+	{
+
+	}
+
+	public class MoveAnimation : AAnimation
 	{
 		public Vec2 from;
 		public Vec2 to;
@@ -53,6 +82,20 @@ namespace Twenty48
 		{
 			this.from = from;
 			this.to = to;
+		}
+	}
+
+	public class MergeAnimation : AAnimation
+	{
+		public Vec2 from;
+		public Vec2 to;
+		public int rank;
+
+		public MergeAnimation(Vec2 from, Vec2 to, int rank)
+		{
+			this.from = from;
+			this.to = to;
+			this.rank = rank;
 		}
 	}
 }

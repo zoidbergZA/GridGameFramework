@@ -20,7 +20,7 @@ namespace Twenty48
 
         public Color GetColor(string debugState)
         {
-			var color = Color.clear;
+			var color = Color.white;
 
 			switch (debugState)
 			{

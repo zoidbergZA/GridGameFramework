@@ -12,8 +12,8 @@ public class TileView : MonoBehaviour
 	public Vec2 BoardPosition { get; set; }
 	public RectTransform RectTransform { get { return GetComponent<RectTransform>(); } }
 
-	public void SetValue(int value)
+	public void SetRank(int rank)
 	{
-		ValueText.text = Mathf.Pow(2, value).ToString();
+		ValueText.text = Mathf.Pow(2, rank).ToString();
 	}
 }

@@ -61,14 +61,20 @@ namespace Twenty48
 			tileView.RectTransform.SetParent(protoTileView.transform.parent);
 			tileView.RectTransform.localScale = Vector3.one;
 			tileView.RectTransform.anchoredPosition = GetBoardPosition(position);
-			tileView.name = "TileView [" + position.x + ", " + position.y + "]";
+			// tileView.name = "TileView [" + position.x + ", " + position.y + "]";
 			tileView.BoardPosition = position;
-			tileView.SetValue(value);
+			tileView.SetRank(value);
 
 			TileViews.Add(tileView);
 			tileView.gameObject.SetActive(true);
 
 			return tileView;
+		}
+
+		public void DestroyTileView(TileView tileView)
+		{
+			TileViews.Remove(tileView);
+			Destroy(tileView.gameObject);
 		}
 
 		public Vector2 GetBoardPosition(Vec2 cell)

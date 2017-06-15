@@ -53,10 +53,25 @@ namespace Twenty48
 
 			boardView.Init(BOARD_SIZE);
 
-			//init random starting tile
-			var pos = new Vec2(Random.Range(0, BOARD_SIZE.x), Random.Range(0, BOARD_SIZE.y));
-			board.GetLayer<int>(tilesLayerId).cells[pos.x, pos.y] = 1;
-			boardView.CreateTileView(pos);
+			// //init random starting tile
+			// var pos = new Vec2(Random.Range(0, BOARD_SIZE.x), Random.Range(0, BOARD_SIZE.y));
+			// board.GetLayer<int>(tilesLayerId).cells[pos.x, pos.y] = 1;
+			// boardView.CreateTileView(pos);
+
+			//test layout
+			Vec2[] cells = new Vec2[]
+			{
+				new Vec2(0, 3),
+				new Vec2(1, 3),
+				new Vec2(2, 3),
+				new Vec2(3, 3)
+			};
+
+			foreach (var item in cells)
+			{
+				board.GetLayer<int>(tilesLayerId).cells[item.x, item.y] = 1;
+				boardView.CreateTileView(item);
+			}
 
 			StartGame(board, controller, layerDebugger);
 		}
@@ -70,7 +85,10 @@ namespace Twenty48
 			var gravityLayer = board.GetLayer<GravityState>(gravityLayerId);
 			var tileLayer = board.GetLayer<int>(tilesLayerId);
 
-			boardController.AddPhase(new GravityProcessor(boardController, boardView.TileAnimator, gravityLayer, tileLayer), gravityLayer);
+			var gravityProcessor = new GravityProcessor(boardController, boardView.TileAnimator, gravityLayer, tileLayer);
+
+			boardController.AddPhase(gravityProcessor, gravityLayer);
+			boardController.AddPhase(new SpawnProcessor(boardView, gravityProcessor, tileLayer), tileLayer);
 
 			return boardController;
 		}
@@ -84,7 +102,7 @@ namespace Twenty48
 
 				if (animationTime > 0)
 				{
-					yield return new WaitForSeconds(animationTime);
+					yield return new WaitForSeconds(animationTime + 0f);
 				}
 			}
 		}

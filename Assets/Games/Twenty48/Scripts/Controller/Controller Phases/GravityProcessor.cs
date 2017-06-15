@@ -18,7 +18,7 @@ namespace Twenty48
         private Crawler[] crawlers;
         private Vec2 boardSize;
         
-        public int Moves { get; set; }
+        public int Moves { get; private set; }
 
         public GravityProcessor(BoardController<MoveDirection> controller, TileAnimator animator,
             BoardLayer<GravityState> gravityLayer, BoardLayer<int> tileLayer)
@@ -42,6 +42,7 @@ namespace Twenty48
             base.Start();
 
             moveDirection = controller.LastInput;
+            RefreshGravityLayer();
 
             //set crawler positions
             Vec2[] positions = new Vec2[boardSize.x];
@@ -76,8 +77,8 @@ namespace Twenty48
 
         public override BoardAlert[] Tick()
         {
-            RefreshGravityLayer();
-            Moves = 0;
+            // RefreshGravityLayer();
+            bool tickMoved = false;
  
             foreach (var crawler in crawlers)
             {
@@ -85,11 +86,17 @@ namespace Twenty48
 
                 while (crawler.State != Crawler.CrawlerState.Done)
                 {
-                    crawler.Crawl();
+                    var movedTile = crawler.Crawl();
+
+                    if (movedTile)
+                    {
+                        Moves++;
+                        tickMoved = true;
+                    }
                 }
             }
 
-            if (Moves == 0)
+            if (!tickMoved)
             {
                 State = PhaseState.Done;
             }
@@ -141,39 +148,61 @@ namespace Twenty48
                 State = CrawlerState.Working;
             }
 
-            public void Crawl()
+            public bool Crawl() //return tile moves
             {
+                bool moved = false;
                 var nextPosition = position + direction;
 
                 if (!nextPosition.IsValidPosition(processor.gravityLayer))
                 {
                     State = CrawlerState.Done;
-                    return;
+                    return moved;
                 }
 
-                var currentCell = processor.tileLayer.GetCell(position);
-                var nextCell = processor.tileLayer.GetCell(nextPosition);
+                var currentCell = processor.gravityLayer.GetCell(position);
+                var nextCell = processor.gravityLayer.GetCell(nextPosition);
 
-                if (nextCell > 0)
+                if (nextCell == GravityState.Ready)
                 {
-                    if (currentCell == 0)
+                    if (currentCell == GravityState.Open)
                     {
-                        //move tile
+                        //move tile data
                         processor.tileLayer.cells[position.x, position.y] = processor.tileLayer.cells[nextPosition.x, nextPosition.y];
-                        processor.tileLayer.cells[nextPosition.x, nextPosition.y] = 0;
+                        processor.gravityLayer.cells[position.x, position.y] = GravityState.Ready;
 
+                        processor.tileLayer.cells[nextPosition.x, nextPosition.y] = 0;
+                        processor.gravityLayer.cells[nextPosition.x, nextPosition.y] = GravityState.Open;
+
+                        //animate
                         processor.tileAnimator.QueueAnimation(new MoveAnimation(nextPosition, position));
 
-                        processor.Moves++;
+                        moved = true;
                     }
-                    else if (currentCell == nextCell)
+                    else
                     {
-                        //todo: score match
-                        processor.Moves++;
+                        var thisRank = processor.tileLayer.GetCell(position);
+                        var otherRank = processor.tileLayer.GetCell(nextPosition);
+
+                        if (thisRank == otherRank)
+                        {
+                            //move tile data
+                            var newRank = thisRank + 1;
+                            processor.tileLayer.cells[position.x, position.y] = newRank;
+                            processor.gravityLayer.cells[position.x, position.y] = GravityState.Fixed;
+            
+                            processor.tileLayer.cells[nextPosition.x, nextPosition.y] = 0;
+                            processor.gravityLayer.cells[nextPosition.x, nextPosition.y] = GravityState.Open;
+
+                            //animate
+                            processor.tileAnimator.QueueAnimation(new MergeAnimation(nextPosition, position, newRank));
+
+                            moved = true;
+                        }
                     }
                 }
 
                 position = nextPosition;
+                return moved;
             }
         }
     }
