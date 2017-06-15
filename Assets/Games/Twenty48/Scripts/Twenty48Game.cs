@@ -70,7 +70,7 @@ namespace Twenty48
 			var gravityLayer = board.GetLayer<GravityState>(gravityLayerId);
 			var tileLayer = board.GetLayer<int>(tilesLayerId);
 
-			boardController.AddPhase(new GravityProcessor(boardController, gravityLayer, tileLayer), gravityLayer);
+			boardController.AddPhase(new GravityProcessor(boardController, boardView.TileAnimator, gravityLayer, tileLayer), gravityLayer);
 
 			return boardController;
 		}
@@ -80,17 +80,12 @@ namespace Twenty48
 			while (Game.BoardController.State == ControllerState.Working)
 			{
 				HandleTick();
+				float animationTime = boardView.TileAnimator.PlayAnimations();
 
-				yield return null; //temp
-
-				// float animationTime = boardView.animationController.PlayAnimations();
-
-				// if (animationTime > 0)
-				// {
-				// 	yield return new WaitForSeconds(animationTime);
-				// }
-				
-				// debugView.RefreshBoardAlerts(lastTickAlerts);
+				if (animationTime > 0)
+				{
+					yield return new WaitForSeconds(animationTime);
+				}
 			}
 		}
 
@@ -101,7 +96,7 @@ namespace Twenty48
 				if (Game.BoardController.State == ControllerState.Working)
 				{
 					HandleTick();
-					// boardView.animationController.PlayAnimations();
+					boardView.TileAnimator.PlayAnimations();
 				}
 			}
 		}

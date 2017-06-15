@@ -11,6 +11,7 @@ namespace Twenty48
     {
         public BoardLayer<GravityState> gravityLayer;
         public BoardLayer<int> tileLayer;
+        public TileAnimator tileAnimator;
 
         private BoardController<MoveDirection> controller;
         private MoveDirection moveDirection;
@@ -19,12 +20,13 @@ namespace Twenty48
         
         public int Moves { get; set; }
 
-        public GravityProcessor(BoardController<MoveDirection> controller, 
+        public GravityProcessor(BoardController<MoveDirection> controller, TileAnimator animator,
             BoardLayer<GravityState> gravityLayer, BoardLayer<int> tileLayer)
         {
             this.controller = controller;
             this.gravityLayer = gravityLayer;
             this.tileLayer = tileLayer;
+            tileAnimator = animator;
 
             boardSize = gravityLayer.GetDimensions();
             crawlers = new Crawler[boardSize.x];
@@ -160,7 +162,8 @@ namespace Twenty48
                         processor.tileLayer.cells[position.x, position.y] = processor.tileLayer.cells[nextPosition.x, nextPosition.y];
                         processor.tileLayer.cells[nextPosition.x, nextPosition.y] = 0;
 
-                        //todo: animate view
+                        processor.tileAnimator.QueueAnimation(new MoveAnimation(nextPosition, position));
+
                         processor.Moves++;
                     }
                     else if (currentCell == nextCell)

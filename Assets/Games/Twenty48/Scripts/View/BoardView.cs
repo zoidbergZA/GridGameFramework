@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GridGame;
+using System.Linq;
 
 namespace Twenty48
 {
 	public class BoardView : MonoBehaviour 
 	{
+		public TileAnimator TileAnimator;
 		public RectTransform protoFieldView;
 		public TileView protoTileView;
 		
@@ -45,13 +47,20 @@ namespace Twenty48
 			protoTileView.gameObject.SetActive(false);
 		}
 
+		public TileView GetTileView(Vec2 position)
+		{
+			var tileView = TileViews.First(v => v.BoardPosition == position);
+
+			return tileView;
+		}
+
 		public TileView CreateTileView(Vec2 position, int value = 1)
 		{
 			var tileView = Instantiate(protoTileView) as TileView;
 
 			tileView.RectTransform.SetParent(protoTileView.transform.parent);
 			tileView.RectTransform.localScale = Vector3.one;
-			tileView.RectTransform.anchoredPosition = new Vector2(position.x * fieldSize.x, position.y * fieldSize.y);
+			tileView.RectTransform.anchoredPosition = GetBoardPosition(position);
 			tileView.name = "TileView [" + position.x + ", " + position.y + "]";
 			tileView.BoardPosition = position;
 			tileView.SetValue(value);
@@ -60,6 +69,11 @@ namespace Twenty48
 			tileView.gameObject.SetActive(true);
 
 			return tileView;
+		}
+
+		public Vector2 GetBoardPosition(Vec2 cell)
+		{
+			return new Vector2(cell.x * fieldSize.x, cell.y * fieldSize.y);
 		}
 	}
 }
