@@ -30,6 +30,11 @@ public class BoardLayer<TLayer> : IGrid, IGenericLayer
         return Size;
     }
 
+	public TLayer GetCell(Vec2 position)
+	{
+		return cells[position.x, position.y];
+	}
+
 	public TLayer[,] GetSample(Stencil stencil, Vec2 anchor)
 	{
 		var samples = new TLayer[stencil.Size.x, stencil.Size.y];

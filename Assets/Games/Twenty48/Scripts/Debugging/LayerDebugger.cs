@@ -20,7 +20,22 @@ namespace Twenty48
 
         public Color GetColor(string debugState)
         {
-            return Color.clear;
+			var color = Color.clear;
+
+			switch (debugState)
+			{
+				case "Open":
+					color = Color.blue;
+					break;
+				case "Fixed":
+					color = Color.white;
+					break;
+				case "Ready":
+					color = Color.green;
+					break;
+			}
+
+			return color;
         }
     }
 }

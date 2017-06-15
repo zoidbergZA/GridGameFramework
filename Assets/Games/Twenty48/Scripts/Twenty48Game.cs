@@ -68,8 +68,9 @@ namespace Twenty48
 		
 			//add controller phases
 			var gravityLayer = board.GetLayer<GravityState>(gravityLayerId);
+			var tileLayer = board.GetLayer<int>(tilesLayerId);
 
-			boardController.AddPhase(new GravityProcessor(boardController, gravityLayer), gravityLayer);
+			boardController.AddPhase(new GravityProcessor(boardController, gravityLayer, tileLayer), gravityLayer);
 
 			return boardController;
 		}
