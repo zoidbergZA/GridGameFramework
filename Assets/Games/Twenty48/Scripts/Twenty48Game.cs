@@ -121,11 +121,9 @@ namespace Twenty48
 			while (Game.BoardController.State == ControllerState.Working)
 			{
 				HandleTick();
-				// Debug.Log("Play animations: " + Time.time);
 				yield return boardView.TileAnimator.PlayAnimations();
-				// Debug.Log("finished animations: " + Time.time);
 			}
-			yield return boardView.TileAnimator.PlayAnimations();
+			// yield return boardView.TileAnimator.PlayAnimations(); //test before remove
 
 			busy = false;
 		}

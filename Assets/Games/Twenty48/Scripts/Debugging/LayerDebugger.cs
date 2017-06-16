@@ -10,7 +10,9 @@ namespace Twenty48
     {
 		public Func<int, string> TilesDebugger = (cell) => 
 		{
-			return cell.ToString();
+			if (cell == 0)
+				return "0";
+			return Mathf.Pow(2, cell).ToString();
 		};
 
 		public Func<GravityState, string> GravityDebugger = (cell) => 

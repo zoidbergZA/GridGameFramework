@@ -44,9 +44,9 @@ namespace Twenty48
 						PlayMoveAnimation(move);
 					}					
 				}
-				Debug.Log("play " + Time.time);
+				
 				yield return new WaitForSeconds(animationTime);
-				Debug.Log("stop " + Time.time);
+				
 				animQueue.Clear();
 				animationTime = 0;
 				IsPlaying = false;
