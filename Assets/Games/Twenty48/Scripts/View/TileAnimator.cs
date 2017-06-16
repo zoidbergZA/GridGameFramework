@@ -32,16 +32,17 @@ namespace Twenty48
 
 				for (int i = 0; i < animQueue.Count; i++)
 				{
-					if (animQueue[i] is MoveAnimation)
-					{
-						MoveAnimation move = (MoveAnimation)animQueue[i];
-						PlayMoveAnimation(move);
-					}
-					else if (animQueue[i] is MergeAnimation)
+					if (animQueue[i] is MergeAnimation)
 					{
 						MergeAnimation merge = (MergeAnimation)animQueue[i];
 						PlayMergeAnimation(merge);
 					}
+
+					else if (animQueue[i] is MoveAnimation)
+					{
+						MoveAnimation move = (MoveAnimation)animQueue[i];
+						PlayMoveAnimation(move);
+					}					
 				}
 
 				yield return new WaitForSeconds(animationTime);
@@ -69,6 +70,7 @@ namespace Twenty48
 			var toView = boardView.GetTileView(anim.to);
 
 			fromView.BoardPosition = anim.to;
+			toView.BoardPosition = Vec2.invalid;
 			fromView.RectTransform
                 .ZKanchoredPositionTo(boardView.GetBoardPosition(anim.to), moveDuration)
                 .setEaseType(EaseType.Linear)

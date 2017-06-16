@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GridGame;
 
 namespace Twenty48
 {
@@ -12,11 +13,11 @@ namespace Twenty48
 		{
 			if (Input.GetKeyDown(KeyCode.UpArrow))
 				game.HandleInput(MoveDirection.Up);
-			if (Input.GetKeyDown(KeyCode.DownArrow))
+			else if (Input.GetKeyDown(KeyCode.DownArrow))
 				game.HandleInput(MoveDirection.Down);
-			if (Input.GetKeyDown(KeyCode.LeftArrow))
+			else if (Input.GetKeyDown(KeyCode.LeftArrow))
 				game.HandleInput(MoveDirection.Left);
-			if (Input.GetKeyDown(KeyCode.RightArrow))
+			else if (Input.GetKeyDown(KeyCode.RightArrow))
 				game.HandleInput(MoveDirection.Right);
 		}
 	}
