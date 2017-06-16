@@ -15,6 +15,7 @@ namespace Twenty48
 		private int tilesLayerId;
 		private int gravityLayerId;
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
+		private bool busy;
 
 		public int Score { get; private set; }
 		public bool GameOver { get; private set; }
@@ -23,11 +24,14 @@ namespace Twenty48
 		{
 			if (boardView.TileAnimator.IsPlaying)
 				return;
+			if (busy)
+				return;
 
 			var inputResult = Game.BoardController.HandleInput(moveDirection);
 		
 			if (inputResult && !TickStepped)
 			{
+				busy = true;
 				StartCoroutine(HandleTickLoop());
 			}
 		}
@@ -121,6 +125,9 @@ namespace Twenty48
 				yield return boardView.TileAnimator.PlayAnimations();
 				// Debug.Log("finished animations: " + Time.time);
 			}
+			yield return boardView.TileAnimator.PlayAnimations();
+
+			busy = false;
 		}
 
 		public override void HandleManualTick()
