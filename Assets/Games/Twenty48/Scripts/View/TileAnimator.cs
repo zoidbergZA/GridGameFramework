@@ -9,10 +9,12 @@ namespace Twenty48
 	public class TileAnimator : MonoBehaviour 
 	{
 		public BoardView boardView;
-		public float moveDuration = 0.3f;
+		public float moveDuration = 1f;
 
 		private List<AAnimation> animQueue = new List<AAnimation>();
 		private float animationTime;
+
+		public bool IsPlaying { get; private set; }
 
 		public void QueueAnimation(AAnimation anim)
 		{
@@ -20,25 +22,34 @@ namespace Twenty48
 			animationTime = moveDuration;
 		}
 
-		public float PlayAnimations()
+		public IEnumerator PlayAnimations()
 		{
-			for (int i = 0; i < animQueue.Count; i++)
+			if (animQueue.Count == 0)
+				yield return null;
+			else
 			{
-				if (animQueue[i] is MoveAnimation)
-				{
-					MoveAnimation move = (MoveAnimation)animQueue[i];
-					PlayMoveAnimation(move);
-				}
-				else if (animQueue[i] is MergeAnimation)
-				{
-					MergeAnimation merge = (MergeAnimation)animQueue[i];
-					PlayMergeAnimation(merge);
-				}
-			}
+				IsPlaying = true;
 
-			animQueue.Clear();
-			animationTime = 0;
-			return moveDuration;
+				for (int i = 0; i < animQueue.Count; i++)
+				{
+					if (animQueue[i] is MoveAnimation)
+					{
+						MoveAnimation move = (MoveAnimation)animQueue[i];
+						PlayMoveAnimation(move);
+					}
+					else if (animQueue[i] is MergeAnimation)
+					{
+						MergeAnimation merge = (MergeAnimation)animQueue[i];
+						PlayMergeAnimation(merge);
+					}
+				}
+
+				yield return new WaitForSeconds(animationTime);
+
+				animQueue.Clear();
+				animationTime = 0;
+				IsPlaying = false;
+			}
 		}
 
 		private void PlayMoveAnimation(MoveAnimation anim)
@@ -64,7 +75,9 @@ namespace Twenty48
                 .start();
 
 			fromView.SetRank(anim.rank);
-			boardView.DestroyTileView(toView);
+
+			//bug: null ref error if no delay on Destroy() call
+			boardView.DestroyTileView(toView, moveDuration * 0.5f);
 		}
 	}
 

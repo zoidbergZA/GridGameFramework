@@ -71,10 +71,10 @@ namespace Twenty48
 			return tileView;
 		}
 
-		public void DestroyTileView(TileView tileView)
+		public void DestroyTileView(TileView tileView, float delay = 0f)
 		{
 			TileViews.Remove(tileView);
-			Destroy(tileView.gameObject);
+			Destroy(tileView.gameObject, delay);
 		}
 
 		public Vector2 GetBoardPosition(Vec2 cell)

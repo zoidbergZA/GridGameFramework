@@ -11,11 +11,11 @@ namespace Twenty48
 
 		public BoardView boardView;
 
-		//layers
 		private int tilesLayerId;
 		private int gravityLayerId;
-
 		private BoardAlert[] lastTickAlerts = new BoardAlert[0];
+
+		public bool GameOver { get; private set; }
 
 		public override void HandleInput(MoveDirection moveDirection)
 		{
@@ -76,6 +76,11 @@ namespace Twenty48
 			StartGame(board, controller, layerDebugger);
 		}
 
+		public void StopGame()
+		{
+			GameOver = true;
+		}
+
 		private BoardController<MoveDirection> InitController(Board board)
 		{
 			//init board controller
@@ -88,7 +93,7 @@ namespace Twenty48
 			var gravityProcessor = new GravityProcessor(boardController, boardView.TileAnimator, gravityLayer, tileLayer);
 
 			boardController.AddPhase(gravityProcessor, gravityLayer);
-			boardController.AddPhase(new SpawnProcessor(boardView, gravityProcessor, tileLayer), tileLayer);
+			boardController.AddPhase(new SpawnProcessor(this, boardView, gravityProcessor, tileLayer), tileLayer);
 
 			return boardController;
 		}
@@ -98,23 +103,20 @@ namespace Twenty48
 			while (Game.BoardController.State == ControllerState.Working)
 			{
 				HandleTick();
-				float animationTime = boardView.TileAnimator.PlayAnimations();
-
-				if (animationTime > 0)
-				{
-					yield return new WaitForSeconds(animationTime + 0f);
-				}
+				// Debug.Log("Play animations: " + Time.time);
+				yield return boardView.TileAnimator.PlayAnimations();
+				// Debug.Log("finished animations: " + Time.time);
 			}
 		}
 
 		public override void HandleManualTick()
 		{
-			if (TickStepped)
+			if (TickStepped && !boardView.TileAnimator.IsPlaying)
 			{
 				if (Game.BoardController.State == ControllerState.Working)
 				{
 					HandleTick();
-					boardView.TileAnimator.PlayAnimations();
+					StartCoroutine(boardView.TileAnimator.PlayAnimations());
 				}
 			}
 		}
@@ -136,7 +138,11 @@ namespace Twenty48
 
         protected override void OnTurnEnded(bool cancelled)
         {
-            // throw new NotImplementedException();
+			if (GameOver)
+			{
+				EndGame();
+				Debug.Log("Game Over!");
+			}
         }
     }
 }
