@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GridGame;
+using UnityEngine;
 
 namespace Twenty48
 {
@@ -12,6 +13,7 @@ namespace Twenty48
         public BoardLayer<GravityState> gravityLayer;
         public BoardLayer<int> tileLayer;
         public TileAnimator tileAnimator;
+        public Twenty48Game game;
 
         private BoardController<MoveDirection> controller;
         private MoveDirection moveDirection;
@@ -20,9 +22,10 @@ namespace Twenty48
         
         public int Moves { get; private set; }
 
-        public GravityProcessor(BoardController<MoveDirection> controller, TileAnimator animator,
+        public GravityProcessor(Twenty48Game game, BoardController<MoveDirection> controller, TileAnimator animator,
             BoardLayer<GravityState> gravityLayer, BoardLayer<int> tileLayer)
         {
+            this.game = game;
             this.controller = controller;
             this.gravityLayer = gravityLayer;
             this.tileLayer = tileLayer;
@@ -195,6 +198,8 @@ namespace Twenty48
 
                             //animate
                             processor.tileAnimator.QueueAnimation(new MergeAnimation(nextPosition, position, newRank));
+
+                            processor.game.ScorePoints((int)Mathf.Pow(2, newRank));
 
                             moved = true;
                         }

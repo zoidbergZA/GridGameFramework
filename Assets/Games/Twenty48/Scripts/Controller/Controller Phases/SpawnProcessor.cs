@@ -40,14 +40,15 @@ namespace Twenty48
 							emptyCells.Add(new Vec2(x, y));
 					}
 				}
-				Debug.Log(" Empty cells: " + emptyCells.Count);
+				
 				if (emptyCells.Count > 0)
 				{
 					//spawn tile in random empty cell
 					var randPos = emptyCells[Random.Range(0, emptyCells.Count)];
+					var randRank = Random.Range(1, 3);
 
-					tileLayer.cells[randPos.x, randPos.y] = 1;
-					boardView.CreateTileView(randPos);
+					tileLayer.cells[randPos.x, randPos.y] = randRank;
+					boardView.CreateTileView(randPos, randRank);
 
 					if (emptyCells.Count == 1)
 					{
