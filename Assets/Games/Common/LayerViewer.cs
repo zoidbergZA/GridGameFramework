@@ -9,6 +9,7 @@ public class LayerViewer : MonoBehaviour
 	public RectTransform boardRect;
 	public CellDebugView cellViewPrefab;
 	public LayerSelector protoLayerSelector;
+	public Toggle showTextToggle;
 	public Slider opacitySlider;
 	public Toggle enabledToggle;
 
@@ -75,6 +76,14 @@ public class LayerViewer : MonoBehaviour
 		ToggleIsOn(enabledToggle.isOn);
 	}
 
+	public void OnToggleShowText(bool newValue)
+	{
+		if (!IsInitialized)
+			return;
+
+		RefreshView();
+	}
+
 	public void OnOpacitySliderChange(float newValue)
 	{
 		// if (Time.time < opacityChangedAt + 0.1f)
@@ -114,8 +123,9 @@ public class LayerViewer : MonoBehaviour
 				for (int y = 0; y < debugInfo.GetLength(1); y++)
 				{
 					var color = colorizer != null ? colorizer.GetColor(debugInfo[x, y]) : Color.clear;
+					string debugText = showTextToggle.isOn ? debugInfo[x, y] : ""; 
 
-					cellViews[x, y].Refresh(color, debugInfo[x, y], opacity);
+					cellViews[x, y].Refresh(color, debugText, opacity);
 				}
 			}
 		}
