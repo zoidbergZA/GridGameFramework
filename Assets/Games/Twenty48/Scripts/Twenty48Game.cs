@@ -9,6 +9,7 @@ namespace Twenty48
 	{
 		public readonly Vec2 BOARD_SIZE = new Vec2(4, 4);
 
+		public float animSpeed = 1f;
 		public BoardView boardView;
 		public HudView hudView;
 
@@ -123,8 +124,7 @@ namespace Twenty48
 				HandleTick();
 				yield return boardView.TileAnimator.PlayAnimations();
 			}
-			// yield return boardView.TileAnimator.PlayAnimations(); //test before remove
-
+			
 			busy = false;
 		}
 

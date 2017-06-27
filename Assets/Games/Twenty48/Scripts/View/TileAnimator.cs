@@ -8,18 +8,18 @@ namespace Twenty48
 {
 	public class TileAnimator : MonoBehaviour 
 	{
+		public Twenty48Game game;
 		public BoardView boardView;
-		public float moveDuration = 1f;
+		public float animDuration = 1f;
 
 		private List<AAnimation> animQueue = new List<AAnimation>();
-		private float animationTime;
 
 		public bool IsPlaying { get; private set; }
+		public float AnimationTime { get { return animDuration / game.animSpeed; } }
 
 		public void QueueAnimation(AAnimation anim)
 		{
 			animQueue.Add(anim);
-			animationTime = moveDuration;
 		}
 
 		public IEnumerator PlayAnimations()
@@ -45,10 +45,9 @@ namespace Twenty48
 					}					
 				}
 				
-				yield return new WaitForSeconds(animationTime);
+				yield return new WaitForSeconds(AnimationTime);
 				
 				animQueue.Clear();
-				animationTime = 0;
 				IsPlaying = false;
 			}
 		}
@@ -59,7 +58,7 @@ namespace Twenty48
 
 			tileView.BoardPosition = anim.to;
 			tileView.RectTransform
-                .ZKanchoredPositionTo(boardView.GetBoardPosition(anim.to), moveDuration)
+                .ZKanchoredPositionTo(boardView.GetBoardPosition(anim.to), AnimationTime)
                 .setEaseType(EaseType.Linear)
                 .start();
 		}
@@ -72,14 +71,14 @@ namespace Twenty48
 			fromView.BoardPosition = anim.to;
 			toView.BoardPosition = Vec2.invalid;
 			fromView.RectTransform
-                .ZKanchoredPositionTo(boardView.GetBoardPosition(anim.to), moveDuration)
+                .ZKanchoredPositionTo(boardView.GetBoardPosition(anim.to), AnimationTime)
                 .setEaseType(EaseType.Linear)
                 .start();
 
 			fromView.SetRank(anim.rank);
 
 			//bug: null ref error if no delay on Destroy() call
-			boardView.DestroyTileView(toView, moveDuration * 0.5f);
+			boardView.DestroyTileView(toView, AnimationTime);
 		}
 	}
 
