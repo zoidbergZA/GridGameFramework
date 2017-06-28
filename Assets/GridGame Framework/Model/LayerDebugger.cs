@@ -8,12 +8,12 @@ namespace GridGame
 	{
 		protected BoardLayer<T> layer;
 		private Vec2 size;
-		private Func<T, string> classifier;
+		private Func<T, string> converter;
 
-		public LayerDebugger(BoardLayer<T> layer, Func<T, string> classifier)
+		public LayerDebugger(BoardLayer<T> layer, Func<T, string> converter)
 		{
 			this.layer = layer;
-			this.classifier = classifier;
+			this.converter = converter;
 
 			size = layer.GetDimensions();
 		}
@@ -26,7 +26,7 @@ namespace GridGame
 			{
 				for (int y = 0; y < size.y; y++)
 				{
-					output[x, y] = classifier(layer.cells[x, y]);
+					output[x, y] = converter(layer.cells[x, y]);
 				}
 			}
 
