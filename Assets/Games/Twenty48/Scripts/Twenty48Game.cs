@@ -39,6 +39,8 @@ namespace Twenty48
 
 		private void Start()
 		{
+			Cursor.visible = true;
+
 			hudView.UpdateScoreText(Score);
 
 			StartGame();
@@ -124,7 +126,7 @@ namespace Twenty48
 				HandleTick();
 				yield return boardView.TileAnimator.PlayAnimations();
 			}
-			
+
 			busy = false;
 		}
 

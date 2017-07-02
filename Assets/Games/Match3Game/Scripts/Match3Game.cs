@@ -34,6 +34,7 @@ namespace Match3
 
 		void Start()
 		{
+			Cursor.visible = true;
 			StartGame();
 		}
 
